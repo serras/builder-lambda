@@ -17,6 +17,11 @@ internal fun FirClassSymbol<*>.builderFunction(session: FirSession): FirNamedFun
         it.name == Name.identifier("builder") && it.isStatic
     }
 
+internal fun FirClassSymbol<*>.builderBuildFunction(session: FirSession): FirNamedFunctionSymbol? =
+    declaredFunctions(session).singleOrNull {
+        it.name == Name.identifier("build") && !it.isStatic && it.valueParameterSymbols.isEmpty()
+    }
+
 internal fun localClassId(name: Name) =
     ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName.ROOT.child(name), isLocal = true)
 

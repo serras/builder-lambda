@@ -6,7 +6,9 @@ package foo.bar
 import com.serranofp.builder.lambda.builder
 import com.serranofp.builder.lambda.with
 
-class A {
+class A { }
+
+class B {
     companion {
         fun builder(length: Int): Builder = TODO()
     }
@@ -14,15 +16,13 @@ class A {
     class Builder(val length: Int) {
         fun title(title: String): Builder = this
         fun size(size: Int): Builder = this
-        fun build(): A = TODO()
     }
 }
 
 fun test() {
-    val s = builder<A>().with {
+    val x = builder<<!NOT_A_BUILDER!>A<!>>().with { }
+    val s = builder<<!NOT_A_BUILDER!>B<!>>().with {
         length = 3
         title = "hello"
-        title <!ASSIGNMENT_TYPE_MISMATCH!>=<!> false
-        <!UNRESOLVED_REFERENCE!>other<!> = 3
     }
 }
