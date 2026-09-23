@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
 
 @OptIn(FirExtensionApiInternals::class)
-class BuilderLambdaRefinementExtension(session: FirSession) : FirFunctionCallRefinementExtension(session) {
+class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(session) {
     data object Key : GeneratedDeclarationKey()
 
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {
         // see if we have a builder
-        if (symbol.callableId != BuilderLambdaIds.FUNCTION_ID) return null
+        if (symbol.callableId != BuilderLambdaIds.BUILDER_FUNCTION_ID) return null
 
         // if the type is not resolved, we find it in a checker
         val typeToBuild =  callInfo.typeArguments.first().toConeTypeProjection().type ?: return null

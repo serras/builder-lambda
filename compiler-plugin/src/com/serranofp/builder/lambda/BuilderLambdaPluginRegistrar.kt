@@ -1,8 +1,9 @@
 package com.serranofp.builder.lambda
 
-import com.serranofp.builder.lambda.fir.BuilderLambdaMembersGenerator
-import com.serranofp.builder.lambda.fir.BuilderLambdaRefinementExtension
+import com.serranofp.builder.lambda.fir.MembersGenerator
+import com.serranofp.builder.lambda.fir.CallRefinement
 import com.serranofp.builder.lambda.fir.CallDataStorage
+import com.serranofp.builder.lambda.fir.ConstructorArgumentsChecker
 import com.serranofp.builder.lambda.fir.WrongBuilderLambdaFirChecker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
@@ -15,8 +16,8 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 class BuilderLambdaPluginRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::CallDataStorage
-        +::BuilderLambdaRefinementExtension
-        +::BuilderLambdaMembersGenerator
+        +::CallRefinement
+        +::MembersGenerator
         +::BuilderLambdaFirCheckers
     }
 }
@@ -25,6 +26,6 @@ class BuilderLambdaFirCheckers(session: FirSession) : FirAdditionalCheckersExten
     override val expressionCheckers: ExpressionCheckers
         get() = object : ExpressionCheckers() {
             override val functionCallCheckers: Set<FirFunctionCallChecker>
-                get() = setOf(WrongBuilderLambdaFirChecker())
+                get() = setOf(WrongBuilderLambdaFirChecker, ConstructorArgumentsChecker)
         }
 }
