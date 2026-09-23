@@ -33,7 +33,7 @@ internal fun FirClassSymbol<*>.builderBuildFunction(session: FirSession): FirNam
 
 internal fun FirExpression?.builderClass(session: FirSession): FirClassSymbol<*>? =
     (this as? FirFunctionCall)
-        ?.takeIf { (calleeReference.symbol as? FirCallableSymbol<*>)?.callableId == BuilderLambdaIds.BUILDER_FUNCTION_ID }
+        ?.takeIf { (calleeReference.symbol as? FirCallableSymbol<*>)?.callableId == BuilderLambdaIds.BUILD_FUNCTION_ID }
         ?.typeArguments?.singleOrNull()?.builderClass(session)
 
 internal fun FirTypeProjection.builderClass(session: FirSession): FirClassSymbol<*>? =
@@ -45,4 +45,9 @@ internal fun localClassId(name: Name) =
 
 internal fun findLet(session: FirSession): FirFunctionSymbol<*> {
     return session.symbolProvider.getTopLevelFunctionSymbols(FqName("kotlin"), Name.identifier("let")).single()
+}
+
+internal fun findRun(session: FirSession): FirFunctionSymbol<*> {
+    return session.symbolProvider.getTopLevelFunctionSymbols(FqName("kotlin"), Name.identifier("run"))
+        .first { it.typeParameterSymbols.size == 1 }
 }

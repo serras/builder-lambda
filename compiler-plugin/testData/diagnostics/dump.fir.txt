@@ -1,0 +1,60 @@
+FILE: dump.kt
+    package foo.bar
+
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|foo/bar/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final static fun builder(length: R|kotlin/Int|): R|foo/bar/A.Builder| {
+            ^builder R|kotlin/TODO|()
+        }
+
+        public final class Builder : R|kotlin/Any| {
+            public constructor(length: R|kotlin/Int|): R|foo/bar/A.Builder| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val length: R|kotlin/Int| = R|<local>/length|
+                public get(): R|kotlin/Int|
+
+            public final fun title(title: R|kotlin/String|): R|foo/bar/A.Builder| {
+                ^title this@R|foo/bar/A.Builder|
+            }
+
+            public final fun size(size: R|kotlin/Int|): R|foo/bar/A.Builder| {
+                ^size this@R|foo/bar/A.Builder|
+            }
+
+            public final fun build(): R|foo/bar/A| {
+                ^build R|kotlin/TODO|()
+            }
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval s: R|foo/bar/A| = R|kotlin/run|<R|foo/bar/A|>(<L> = fun <anonymous>(): R|foo/bar/A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class LocalABuilder {
+                public final var length: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                    public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+                public final var title: R|kotlin/String|
+                    public get(): R|kotlin/String|
+                    public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+                public final var size: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                    public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            }
+
+            ^ R|com/serranofp/builder/lambda/build|<R|foo/bar/A|, R|<local>/LocalABuilder|>(<L> = build@fun R|<local>/LocalABuilder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|<local>/LocalABuilder.length| = Int(3)
+                this@R|special/anonymous|.R|<local>/LocalABuilder.title| = String(hello)
+            }
+            )
+        }
+        )
+    }

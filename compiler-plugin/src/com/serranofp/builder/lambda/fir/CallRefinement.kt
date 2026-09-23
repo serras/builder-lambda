@@ -33,13 +33,13 @@ class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(s
 
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {
         // see if we have a builder
-        if (symbol.callableId != BuilderLambdaIds.BUILDER_FUNCTION_ID) return null
+        if (symbol.callableId != BuilderLambdaIds.BUILD_FUNCTION_ID) return null
 
         // if the type is not resolved, we find it in a checker
-        val typeToBuild =  callInfo.typeArguments.first().toConeTypeProjection().type ?: return null
-        val classToBuild = typeToBuild.toClassSymbol(session) ?: return null
-        val builderFunction = classToBuild.builderFunction(session) ?: return null
-        val builderClass = builderFunction.resolvedReturnType.toClassSymbol(session) ?: return null
+        val typeToBuild =  callInfo.typeArguments.firstOrNull()?.toConeTypeProjection()?.type ?: return callInfo.updateTypeArgumentToNothing()
+        val classToBuild = typeToBuild.toClassSymbol(session) ?: return callInfo.updateTypeArgumentToNothing()
+        val builderFunction = classToBuild.builderFunction(session) ?: return callInfo.updateTypeArgumentToNothing()
+        val builderClass = builderFunction.resolvedReturnType.toClassSymbol(session) ?: return callInfo.updateTypeArgumentToNothing()
 
         val refinedTypeId = localClassId(Name.identifier("Local${classToBuild.name.asStringStripSpecialMarkers()}Builder"))
         val refinedTypeSymbol = FirRegularClassSymbol(refinedTypeId)
@@ -54,42 +54,55 @@ class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(s
 
             name = refinedTypeId.shortClassName
             this.symbol = refinedTypeSymbol
-            superTypeRefs += buildResolvedTypeRef {
-                coneType = ConeClassLikeTypeImpl(
-                    ConeClassLikeLookupTagImpl(BuilderLambdaIds.CLASS_ID),
-                    typeArguments = arrayOf(typeToBuild),
-                    isMarkedNullable = false
-                )
-            }
-        }
-
-        val typeRef = buildResolvedTypeRef {
-            coneType = ConeClassLikeTypeImpl(
-                refinedTypeSymbol.toLookupTag(),
-                arrayOf(),
-                isMarkedNullable = false
-            )
         }
 
         val callData = GeneratedCallData(classToBuild, builderClass, refinedTypeDeclaration)
         refinedTypeDeclaration.generatedCallData = callData
+        // transform * => the local class
+        callInfo.updateTypeArgument(
+            buildResolvedTypeRef {
+                coneType = ConeClassLikeTypeImpl(
+                    refinedTypeDeclaration.symbol.toLookupTag(),
+                    arrayOf(),
+                    isMarkedNullable = false
+                )
+            }
+        )
 
-        return CallReturnType(typeRef) { functionSymbol ->
+        return CallReturnType(typeToBuild.toFirResolvedTypeRef()) { functionSymbol ->
             session.callDataStorage.generatedCallData.getValue(functionSymbol, callData)
         }
     }
 
+    fun CallInfo.updateTypeArgumentToNothing(): Nothing? {
+        updateTypeArgument(session.builtinTypes.nothingType)
+        return null
+    }
+
+    fun CallInfo.updateTypeArgument(typeRef: FirTypeRef) {
+        (callSite as? FirFunctionCall)?.transformTypeArguments(object : FirTransformer<Nothing?>() {
+            override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+                return if (element is FirStarProjection) {
+                    @Suppress("UNCHECKED_CAST")
+                    buildTypeProjectionWithVariance {
+                        this.typeRef = typeRef
+                        this.variance = Variance.INVARIANT
+                    } as E
+                } else {
+                    element
+                }
+            }
+        }, null)
+    }
+
     @OptIn(SymbolInternals::class)
     override fun transform(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall {
-        val resolvedLet = findLet(session)
-        val parameter = resolvedLet.valueParameterSymbols[0]
-
-        val explicitReceiver = call.explicitReceiver ?: return call
-        val receiverType = explicitReceiver.resolvedType
-        val returnType = call.resolvedType
+        val transformedSymbol = call.calleeReference.resolved?.toResolvedNamedFunctionSymbol() ?: return call
         val originalSource = call.calleeReference.source
-        val callDispatchReceiver = call.dispatchReceiver
-        val callExtensionReceiver = call.extensionReceiver
+
+        val callData = session.callDataStorage.generatedCallData.getValue(transformedSymbol)
+        val localBuilderClass = callData.localBuilderClass
+        localBuilderClass.anchor = call.source
 
         call.transformCalleeReference(object : FirTransformer<Nothing?>() {
             override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
@@ -105,11 +118,7 @@ class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(s
             }
         }, null)
 
-        val symbol = call.calleeReference.resolved?.toResolvedNamedFunctionSymbol() ?: return call
-        val callData = session.callDataStorage.generatedCallData.getValue(symbol)
-        val localBuilderClass = callData.localBuilderClass
-        localBuilderClass.anchor = call.source
-
+        val returnType = call.resolvedType
         val argument = buildAnonymousFunctionExpression {
             val fSymbol = FirAnonymousFunctionSymbol()
             val target = FirFunctionTarget(null, isLambda = true)
@@ -123,41 +132,11 @@ class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(s
                 returnTypeRef = buildResolvedTypeRef {
                     coneType = returnType
                 }
-                val itName = Name.identifier("it")
-                val parameterSymbol = FirValueParameterSymbol()
-                valueParameters += buildValueParameter {
-                    moduleData = session.moduleData
-                    origin = FirDeclarationOrigin.Plugin(Key)
-                    returnTypeRef = buildResolvedTypeRef {
-                        coneType = receiverType
-                    }
-                    name = itName
-                    this.symbol = parameterSymbol
-                    containingDeclarationSymbol = fSymbol
-                    isCrossinline = false
-                    isNoinline = false
-                    isVararg = false
-                }
                 body = buildBlock {
                     this.coneTypeOrNull = returnType
                     statements += callData.localBuilderClass
 
                     statements += buildReturnExpression {
-                        val itPropertyAccess = buildPropertyAccessExpression {
-                            coneTypeOrNull = receiverType
-                            calleeReference = buildResolvedNamedReference {
-                                name = parameterSymbol.name
-                                resolvedSymbol = parameterSymbol
-                            }
-                        }
-                        if (callDispatchReceiver != null) {
-                            call.replaceDispatchReceiver(itPropertyAccess)
-                        }
-                        call.replaceExplicitReceiver(itPropertyAccess)
-                        if (callExtensionReceiver != null) {
-                            call.replaceExtensionReceiver(itPropertyAccess)
-                        }
-
                         result = call
                         this.target = target
                     }
@@ -167,8 +146,8 @@ class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(s
                 hasExplicitParameterList = false
                 typeRef = buildResolvedTypeRef {
                     coneType = ConeClassLikeTypeImpl(
-                        ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function1"))),
-                        typeArguments = arrayOf(receiverType, returnType),
+                        ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function0"))),
+                        typeArguments = arrayOf(returnType),
                         isMarkedNullable = false
                     )
                 }
@@ -177,29 +156,19 @@ class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(s
             }.also { target.bind(it) }
         }
 
+        val runFunction = findRun(session)
+        val runParameter = runFunction.valueParameterSymbols[0]
         val newCall = buildFunctionCall {
             this.coneTypeOrNull = returnType
             typeArguments += buildTypeProjectionWithVariance {
-                typeRef = buildResolvedTypeRef {
-                    coneType = receiverType
-                }
+                typeRef = buildResolvedTypeRef { coneType = returnType }
                 variance = Variance.INVARIANT
             }
-
-            typeArguments += buildTypeProjectionWithVariance {
-                typeRef = buildResolvedTypeRef {
-                    coneType = returnType
-                }
-                variance = Variance.INVARIANT
-            }
-            dispatchReceiver = call.dispatchReceiver
-            this.explicitReceiver = call.explicitReceiver
-            extensionReceiver = call.extensionReceiver
-            argumentList = buildResolvedArgumentList(original = null, linkedMapOf(argument to parameter.fir))
+            argumentList = buildResolvedArgumentList(original = null, linkedMapOf(argument to runParameter.fir))
             calleeReference = buildResolvedNamedReference {
                 source = originalSource
-                name = Name.identifier("let")
-                resolvedSymbol = resolvedLet
+                name = Name.identifier("run")
+                resolvedSymbol = runFunction
             }
         }
         return newCall

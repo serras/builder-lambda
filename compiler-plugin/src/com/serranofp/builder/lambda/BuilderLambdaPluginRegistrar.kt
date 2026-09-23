@@ -3,8 +3,7 @@ package com.serranofp.builder.lambda
 import com.serranofp.builder.lambda.fir.MembersGenerator
 import com.serranofp.builder.lambda.fir.CallRefinement
 import com.serranofp.builder.lambda.fir.CallDataStorage
-import com.serranofp.builder.lambda.fir.ConstructorArgumentsChecker
-import com.serranofp.builder.lambda.fir.WrongBuilderLambdaFirChecker
+import com.serranofp.builder.lambda.fir.Checker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
@@ -26,6 +25,6 @@ class BuilderLambdaFirCheckers(session: FirSession) : FirAdditionalCheckersExten
     override val expressionCheckers: ExpressionCheckers
         get() = object : ExpressionCheckers() {
             override val functionCallCheckers: Set<FirFunctionCallChecker>
-                get() = setOf(WrongBuilderLambdaFirChecker, ConstructorArgumentsChecker)
+                get() = setOf(Checker)
         }
 }

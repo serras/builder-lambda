@@ -1,8 +1,8 @@
 package com.serranofp.builder.lambda
 
+import com.serranofp.builder.lambda.ir.CallTransformerExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.compiler.plugin.template.ir.SimpleIrGenerationExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 
@@ -14,6 +14,6 @@ class BuilderLambdaComponentRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         FirExtensionRegistrarAdapter.registerExtension(BuilderLambdaPluginRegistrar())
-        // IrGenerationExtension.registerExtension(SimpleIrGenerationExtension())
+        IrGenerationExtension.registerExtension(CallTransformerExtension())
     }
 }

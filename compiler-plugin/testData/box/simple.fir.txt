@@ -1,24 +1,42 @@
 FILE: simple.kt
     package foo.bar
 
-    @R|org/jetbrains/kotlin/compiler/plugin/template/SomeAnnotation|() public final fun box(): R|kotlin/String| {
-        lval result: R|kotlin/String| = R|foo/bar/MyClass|().R|foo/bar/MyClass.foo|()
-        ^box when () {
-            ==(R|<local>/result|, String(Hello world)) ->  {
-                String(OK)
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|foo/bar/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final static fun builder(length: R|kotlin/Int|): R|foo/bar/A.Builder| {
+            ^builder R|kotlin/TODO|()
+        }
+
+        public final class Builder : R|kotlin/Any| {
+            public constructor(length: R|kotlin/Int|): R|foo/bar/A.Builder| {
+                super<R|kotlin/Any|>()
             }
-            else ->  {
-                <strcat>(String(Fail: ), R|<local>/result|)
+
+            public final val length: R|kotlin/Int| = R|<local>/length|
+                public get(): R|kotlin/Int|
+
+            public final fun title(title: R|kotlin/String|): R|foo/bar/A.Builder| {
+                ^title this@R|foo/bar/A.Builder|
             }
+
+            public final fun size(size: R|kotlin/Int|): R|foo/bar/A.Builder| {
+                ^size this@R|foo/bar/A.Builder|
+            }
+
+            public final fun build(): R|foo/bar/A| {
+                ^build R|kotlin/TODO|()
+            }
+
         }
 
     }
-FILE: foo/bar/MyClass.kt
-    package foo.bar
-
-    public final class MyClass : R|kotlin/Any| {
-        public final fun foo(): R|kotlin/String|
-
-        public constructor(): R|foo/bar/MyClass|
-
+    public final fun test(): R|kotlin/Unit| {
+        lval s: R|foo/bar/A| = R|com/serranofp/builder/lambda/builder|<R|foo/bar/A|>().R|com/serranofp/builder/lambda/with|<R|foo/bar/A|, R|<local>/LocalABuilder|>(<L> = with@fun R|<local>/LocalABuilder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|<local>/LocalABuilder.length| = Int(3)
+            this@R|special/anonymous|.R|<local>/LocalABuilder.title| = String(hello)
+        }
+        )
     }

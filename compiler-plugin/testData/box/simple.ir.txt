@@ -1,32 +1,58 @@
 FILE fqName:foo.bar fileName:/simple.kt
-  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
-    annotations:
-      SomeAnnotation
-    BLOCK_BODY
-      VAR name:result type:kotlin.String [val]
-        CALL 'public final fun foo (): kotlin.String declared in foo.bar.MyClass' type=kotlin.String origin=null
-          ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.bar.MyClass' type=foo.bar.MyClass origin=null
-      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.bar'
-        WHEN type=kotlin.String origin=IF
-          BRANCH
-            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              ARG arg0: GET_VAR 'val result: kotlin.String declared in foo.bar.box' type=kotlin.String origin=null
-              ARG arg1: CONST String type=kotlin.String value="Hello world"
-            then: BLOCK type=kotlin.String origin=null
-              CONST String type=kotlin.String value="OK"
-          BRANCH
-            if: CONST Boolean type=kotlin.Boolean value=true
-            then: BLOCK type=kotlin.String origin=null
-              STRING_CONCATENATION type=kotlin.String
-                CONST String type=kotlin.String value="Fail: "
-                GET_VAR 'val result: kotlin.String declared in foo.bar.box' type=kotlin.String origin=null
-FILE fqName:foo.bar fileName:foo/bar/MyClass.kt
-  CLASS GENERATED[org.jetbrains.kotlin.compiler.plugin.template.fir.SimpleClassGenerator.Key] CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]
-    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.MyClass
-    CONSTRUCTOR GENERATED[org.jetbrains.kotlin.compiler.plugin.template.fir.SimpleClassGenerator.Key] visibility:public returnType:foo.bar.MyClass
+  CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.A
+    CLASS CLASS name:Builder modality:FINAL visibility:public superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.A.Builder
+      PROPERTY name:length visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'length: kotlin.Int declared in foo.bar.A.Builder.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-length> visibility:public modality:FINAL returnType:kotlin.Int
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A.Builder
+          correspondingProperty: PROPERTY name:length visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-length> (): kotlin.Int declared in foo.bar.A.Builder'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                receiver: GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.<get-length>' type=foo.bar.A.Builder origin=null
+      CONSTRUCTOR visibility:public returnType:foo.bar.A.Builder [primary]
+        VALUE_PARAMETER kind:Regular name:length index:0 type:kotlin.Int
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Builder modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+      FUN name:build visibility:public modality:FINAL returnType:foo.bar.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A.Builder
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun build (): foo.bar.A declared in foo.bar.A.Builder'
+            CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+      FUN name:size visibility:public modality:FINAL returnType:foo.bar.A.Builder
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A.Builder
+        VALUE_PARAMETER kind:Regular name:size index:1 type:kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun size (size: kotlin.Int): foo.bar.A.Builder declared in foo.bar.A.Builder'
+            GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.size' type=foo.bar.A.Builder origin=null
+      FUN name:title visibility:public modality:FINAL returnType:foo.bar.A.Builder
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A.Builder
+        VALUE_PARAMETER kind:Regular name:title index:1 type:kotlin.String
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun title (title: kotlin.String): foo.bar.A.Builder declared in foo.bar.A.Builder'
+            GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.title' type=foo.bar.A.Builder origin=null
+    CONSTRUCTOR visibility:public returnType:foo.bar.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[org.jetbrains.kotlin.compiler.plugin.template.fir.SimpleClassGenerator.Key] CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]' type=foo.bar.MyClass
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -40,8 +66,26 @@ FILE fqName:foo.bar fileName:foo/bar/MyClass.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-    FUN GENERATED[org.jetbrains.kotlin.compiler.plugin.template.fir.SimpleClassGenerator.Key] name:foo visibility:public modality:FINAL returnType:kotlin.String
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.MyClass
+    FUN name:builder visibility:public modality:FINAL returnType:foo.bar.A.Builder [companion]
+      VALUE_PARAMETER kind:Regular name:length index:0 type:kotlin.Int
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.String declared in foo.bar.MyClass'
-          CONST String type=kotlin.String value="Hello world"
+        RETURN type=kotlin.Nothing from='public final fun builder (length: kotlin.Int): foo.bar.A.Builder declared in foo.bar.A'
+          CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+  FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:s type:foo.bar.A [val]
+        CALL 'public final fun with <T, E> (<this>: E of com.serranofp.builder.lambda.with, block: @[ExtensionFunctionType] kotlin.Function1<E of com.serranofp.builder.lambda.with, kotlin.Unit>): T of com.serranofp.builder.lambda.with declared in com.serranofp.builder.lambda' type=foo.bar.A origin=null
+          TYPE_ARG T: foo.bar.A
+          TYPE_ARG E: <root>.<stub>.LocalABuilder
+          ARG <this>: CALL 'public final fun builder <T> (): <root>.<stub>.LocalABuilder declared in com.serranofp.builder.lambda' type=<root>.<stub>.LocalABuilder origin=null
+            TYPE_ARG T: foo.bar.A
+          ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.<stub>.LocalABuilder, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:ExtensionReceiver name:$this$with index:0 type:<root>.<stub>.LocalABuilder
+              BLOCK_BODY
+                CALL 'public final fun <set-length> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.<stub>.LocalABuilder' type=kotlin.Unit origin=EQ
+                  ARG <this>: GET_VAR '$this$with: <root>.<stub>.LocalABuilder declared in foo.bar.test.<anonymous>' type=<root>.<stub>.LocalABuilder origin=IMPLICIT_ARGUMENT
+                  ARG <set-?>: CONST Int type=kotlin.Int value=3
+                CALL 'public final fun <set-title> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.<stub>.LocalABuilder' type=kotlin.Unit origin=EQ
+                  ARG <this>: GET_VAR '$this$with: <root>.<stub>.LocalABuilder declared in foo.bar.test.<anonymous>' type=<root>.<stub>.LocalABuilder origin=IMPLICIT_ARGUMENT
+                  ARG <set-?>: CONST String type=kotlin.String value="hello"

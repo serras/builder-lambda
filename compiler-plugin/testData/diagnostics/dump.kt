@@ -1,11 +1,10 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CompanionBlocksAndExtensions
+// FIR_DUMP
 
 package foo.bar
 
-import com.serranofp.builder.lambda.Builder
-import com.serranofp.builder.lambda.builder
-import com.serranofp.builder.lambda.with
+import com.serranofp.builder.lambda.build
 
 class A {
     companion {
@@ -19,14 +18,9 @@ class A {
     }
 }
 
-fun Builder<A>.f(): Unit { }
-
 fun test() {
-    val b = builder<A>()
-    val v = <!WITH_MUST_USE_BUILD!>b<!>.with { }
-    val u = builder<A>().with(<!WITH_MUST_USE_LAMBDA!>Builder<A>::f<!>)
-    val s = builder<A>().with {
-        title = "hello"
+    val s = build<A, *> {
         length = 3
+        title = "hello"
     }
 }

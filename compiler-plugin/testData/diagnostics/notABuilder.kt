@@ -3,8 +3,7 @@
 
 package foo.bar
 
-import com.serranofp.builder.lambda.builder
-import com.serranofp.builder.lambda.with
+import com.serranofp.builder.lambda.build
 
 class A { }
 
@@ -20,8 +19,8 @@ class B {
 }
 
 fun test() {
-    val x = builder<<!NOT_A_BUILDER!>A<!>>().with { }
-    val s = builder<<!NOT_A_BUILDER!>B<!>>().with {
+    val x = build<<!NOT_A_BUILDER!>A<!>, *> { }
+    val s = build<<!NOT_A_BUILDER!>B<!>, *> {
         length = 3
         title = "hello"
     }
