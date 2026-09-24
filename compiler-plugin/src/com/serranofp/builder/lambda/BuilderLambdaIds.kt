@@ -11,9 +11,4 @@ data object BuilderLambdaIds {
         PACKAGE,
         Name.identifier("build")
     )
-
-    val WITH_FUNCTION_ID = CallableId(
-        PACKAGE,
-        Name.identifier("with")
-    )
 }

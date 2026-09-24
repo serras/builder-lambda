@@ -18,7 +18,7 @@ class CallTransformerExtension : IrGenerationExtension {
 
 class CallTransformer : IrElementTransformerVoid() {
     override fun visitCall(expression: IrCall): IrExpression {
-        if (expression.symbol.hasEqualFqName(BuilderLambdaIds.WITH_FUNCTION_ID.asSingleFqName())) {
+        if (expression.symbol.hasEqualFqName(BuilderLambdaIds.BUILD_FUNCTION_ID.asSingleFqName())) {
             println("hello")
         }
         return super.visitCall(expression)

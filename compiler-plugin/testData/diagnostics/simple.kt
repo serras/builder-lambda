@@ -20,6 +20,10 @@ class A {
 fun Any.f() { }
 
 fun test() {
+    val u = build<A, *> {
+        title = "hello"
+        length = <!BUILDER_CANNOT_BE_READ!>title<!>.length
+    }
     val s = build<A, *> {
         length = 3
         title = "hello"

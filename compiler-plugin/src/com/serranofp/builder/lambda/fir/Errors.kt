@@ -10,6 +10,7 @@ object Errors : KtDiagnosticsContainer() {
     val NOT_A_BUILDER by error0<KtElement>()
     val MUST_USE_LAMBDA by error0<KtElement>()
     val CONSTRUCTOR_ARG_GO_FIRST by error0<KtElement>()
+    val BUILDER_CANNOT_BE_READ by error0<KtElement>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = Renderers
 
@@ -18,6 +19,7 @@ object Errors : KtDiagnosticsContainer() {
             it.put(NOT_A_BUILDER, "This type does not follow the Builder pattern")
             it.put(MUST_USE_LAMBDA, "The argument to ''build'' must be a lambda")
             it.put(CONSTRUCTOR_ARG_GO_FIRST, "Required builder argument, it must be assigned first")
+            it.put(BUILDER_CANNOT_BE_READ, "Builder arguments cannot be read from")
         }
     }
 }
