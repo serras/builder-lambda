@@ -2,8 +2,7 @@
 
 package foo.bar
 
-import com.serranofp.builder.lambda.builder
-import com.serranofp.builder.lambda.with
+import com.serranofp.builder.lambda.build
 
 class A {
     companion {
@@ -18,7 +17,7 @@ class A {
 }
 
 fun test() {
-    val s = builder<A, *> {
+    val s = build<A, *> {
         length = 3
         title = "hello"
     }

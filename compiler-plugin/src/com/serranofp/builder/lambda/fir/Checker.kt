@@ -7,23 +7,13 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.FirAugmentedAssignment
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.expressions.argument
+import org.jetbrains.kotlin.fir.declarations.constructors
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toConeTypeProjection
-import org.jetbrains.kotlin.fir.types.type
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -38,10 +28,19 @@ object Checker : FirFunctionCallChecker(MppCheckerKind.Common) {
         // check we follow the Builder pattern
         val typeToBuild =  typeArgument.toConeTypeProjection().type
         val builderClass = typeArgument.builderClass(context.session)
+        val builderClassConstructor = builderClass?.constructors(context.session)?.singleOrNull()
         val builderBuildFunction = builderClass?.builderBuildFunction(context.session)
 
-        if (builderBuildFunction == null || typeToBuild == null || builderBuildFunction.resolvedReturnType.classId != typeToBuild.classId) {
-            reporter.reportOn(typeArgument.source, Errors.NOT_A_BUILDER)
+        val followsBuilderPattern =
+            builderClassConstructor != null && builderBuildFunction != null &&
+                    typeToBuild != null && builderBuildFunction.resolvedReturnType.classId == typeToBuild.classId
+
+        if (!followsBuilderPattern) {
+            when {
+                builderClass == null -> reporter.reportOn(typeArgument.source, Errors.NOT_A_BUILDER_BUILDER)
+                builderClassConstructor == null -> reporter.reportOn(typeArgument.source, Errors.NOT_A_BUILDER_CONSTRUCTOR, builderClass)
+                else -> reporter.reportOn(typeArgument.source, Errors.NOT_A_BUILDER_NO_BUILD, builderClass)
+            }
         }
 
         val argument = expression.argument
@@ -49,53 +48,68 @@ object Checker : FirFunctionCallChecker(MppCheckerKind.Common) {
             reporter.reportOn(argument.source, Errors.MUST_USE_LAMBDA)
         }
 
-        if (builderClass == null || argument !is FirAnonymousFunctionExpression) return
+        if (!followsBuilderPattern || argument !is FirAnonymousFunctionExpression) return
+
+        val cache = CallablesCache(context.session)
+        val localBuilderClass = expression.typeArguments[1].toConeTypeProjection().type ?: return
 
         val body = argument.anonymousFunction.body ?: return
-        val cache = CallablesCache(context.session)
+        val requiredParameters = cache.getConstructorParameters(builderClass)
         var afterConstructorArguments = false
+        val givenConstructorArguments = mutableSetOf<FirValueParameterSymbol>()
         for (statement in body.statements) {
-            val isConstructorArgument = statement.isAssignmentToConstructor(cache, builderClass)
+            val constructorArgument = statement.extractAssignmentToConstructor(localBuilderClass, requiredParameters)
 
-            if (!afterConstructorArguments && !isConstructorArgument) {
-                afterConstructorArguments = true
-            } else if (afterConstructorArguments && isConstructorArgument) {
+            if (!afterConstructorArguments) {
+                if (constructorArgument != null) { givenConstructorArguments.add(constructorArgument) }
+                else { afterConstructorArguments = true }
+            } else if (constructorArgument != null) {
                 reporter.reportOn(statement.lValue.source, Errors.CONSTRUCTOR_ARG_GO_FIRST)
             }
         }
 
-        val localBuilderClass = expression.typeArguments[1].toConeTypeProjection().type ?: return
-        body.accept(object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
+        val missingParameters = requiredParameters - givenConstructorArguments
+        if (missingParameters.isNotEmpty()) {
+            reporter.reportOn(expression.calleeReference.source, Errors.CONSTRUCTOR_ARGS_MISSING, missingParameters)
+        }
+
+        body.accept(object : FirVisitor<Unit, Boolean>() {
+            // 'data' tells us whether we should check the property
+            override fun visitElement(element: FirElement, data: Boolean) {
                 when (element) {
-                    is FirVariableAssignment -> element.rValue.accept(this)
-                    is FirAugmentedAssignment -> element.rightArgument.accept(this)
-                    is FirPropertyAccessExpression -> {
+                    // on assignments we allow one level of property
+                    is FirVariableAssignment -> {
+                        element.lValue.accept(this, false)
+                        element.rValue.accept(this, true)
+                    }
+                    is FirAugmentedAssignment -> {
+                        element.leftArgument.accept(this, false)
+                        element.rightArgument.accept(this, true)
+                    }
+                    is FirPropertyAccessExpression if data -> {
                         val dispatch = element.dispatchReceiver as? FirThisReceiverExpression
                         if (dispatch?.resolvedType?.classId == localBuilderClass.classId) {
                             reporter.reportOn(element.source, Errors.BUILDER_CANNOT_BE_READ)
                         }
-                        element.acceptChildren(this)
+                        element.acceptChildren(this, true)
                     }
-                    else -> element.acceptChildren(this)
+                    else -> element.acceptChildren(this, true)
                 }
             }
-        })
+        }, true)
     }
 
     @OptIn(ExperimentalContracts::class)
-    private fun FirStatement.isAssignmentToConstructor(cache: CallablesCache, receiver: FirClassSymbol<*>): Boolean {
+    private fun FirStatement.extractAssignmentToConstructor(receiver: ConeKotlinType, required: List<FirValueParameterSymbol>): FirValueParameterSymbol? {
         contract {
-            returns(true) implies (this@isAssignmentToConstructor is FirVariableAssignment)
+            returnsNotNull() implies (this@extractAssignmentToConstructor is FirVariableAssignment)
         }
 
-        if (this !is FirVariableAssignment) return false
-        val lValue = lValue as? FirPropertyAccessExpression ?: return false
-        val dispatch = lValue.dispatchReceiver as? FirThisReceiverExpression ?: return false
-        if (dispatch.resolvedType.classId != receiver.classId) return false
-        return cache[receiver].orEmpty().any { [key, value] ->
-            key == lValue.calleeReference.name && value.any { it is Category.Constructor }
-        }
+        if (this !is FirVariableAssignment) return null
+        val lValue = lValue as? FirPropertyAccessExpression ?: return null
+        val dispatch = lValue.dispatchReceiver as? FirThisReceiverExpression ?: return null
+        if (dispatch.resolvedType.classId != receiver.classId) return null
+        return required.find { parameter -> parameter.name == lValue.calleeReference.name }
     }
 
 }

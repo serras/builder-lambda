@@ -80,9 +80,10 @@ class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(s
     }
 
     fun CallInfo.updateTypeArgument(typeRef: FirTypeRef) {
+        val secondArgument = typeArguments[1]
         (callSite as? FirFunctionCall)?.transformTypeArguments(object : FirTransformer<Nothing?>() {
             override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
-                return if (element is FirStarProjection) {
+                return if (element == secondArgument) {
                     @Suppress("UNCHECKED_CAST")
                     buildTypeProjectionWithVariance {
                         this.typeRef = typeRef
@@ -109,6 +110,7 @@ class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(s
                 return if (element is FirResolvedNamedReference) {
                     @Suppress("UNCHECKED_CAST")
                     buildResolvedNamedReference {
+                        this.source = originalSource
                         this.name = element.name
                         resolvedSymbol = originalSymbol
                     } as E
@@ -159,6 +161,7 @@ class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(s
         val runFunction = findRun(session)
         val runParameter = runFunction.valueParameterSymbols[0]
         val newCall = buildFunctionCall {
+            this.source = originalSource
             this.coneTypeOrNull = returnType
             typeArguments += buildTypeProjectionWithVariance {
                 typeRef = buildResolvedTypeRef { coneType = returnType }

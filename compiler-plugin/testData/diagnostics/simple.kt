@@ -13,6 +13,7 @@ class A {
     class Builder(val length: Int) {
         fun title(title: String): Builder = this
         fun size(size: Int): Builder = this
+        fun authors(authors: MutableList<String>): Builder = this
         fun build(): A = TODO()
     }
 }
@@ -20,9 +21,10 @@ class A {
 fun Any.f() { }
 
 fun test() {
-    val u = build<A, *> {
+    val r = <!CONSTRUCTOR_ARGS_MISSING!>build<!><A, *> {
         title = "hello"
-        length = <!BUILDER_CANNOT_BE_READ!>title<!>.length
+        <!CONSTRUCTOR_ARG_GO_FIRST!>length<!> = <!BUILDER_CANNOT_BE_READ!>title<!>.length
+        <!BUILDER_CANNOT_BE_READ!>authors<!>[0] = "me"
     }
     val s = build<A, *> {
         length = 3
@@ -30,5 +32,10 @@ fun test() {
         title <!ASSIGNMENT_TYPE_MISMATCH!>=<!> false
         <!UNRESOLVED_REFERENCE!>other<!> = 3
     }
-    val t = build<A, *>(<!MUST_USE_LAMBDA!>Any::f<!>)
+    val t = <!CONSTRUCTOR_ARGS_MISSING!>build<!><A, *> {
+        title = "hello"
+        title <!ASSIGNMENT_TYPE_MISMATCH!>=<!> false
+        <!UNRESOLVED_REFERENCE!>other<!> = 3
+    }
+    val u = build<A, *>(<!MUST_USE_LAMBDA!>Any::f<!>)
 }

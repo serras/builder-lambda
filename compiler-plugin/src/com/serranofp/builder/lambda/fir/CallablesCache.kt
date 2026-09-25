@@ -70,6 +70,11 @@ class CallablesCache(val session: FirSession) {
         }
         return found
     }
+
+    fun getConstructorParameters(symbol: FirClassSymbol<*>): List<FirValueParameterSymbol> =
+        get(symbol).orEmpty().flatMap { [_, categories] ->
+            categories.mapNotNull { if (it is Category.Constructor) it.symbol else null }
+        }
 }
 
 sealed interface Category {

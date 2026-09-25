@@ -19,8 +19,8 @@ class B {
 }
 
 fun test() {
-    val x = build<<!NOT_A_BUILDER!>A<!>, *> { }
-    val s = build<<!NOT_A_BUILDER!>B<!>, *> {
+    val x = build<<!NOT_A_BUILDER_BUILDER!>A<!>, *> { }
+    val s = build<<!NOT_A_BUILDER_NO_BUILD!>B<!>, *> {
         length = 3
         title = "hello"
     }
