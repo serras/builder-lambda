@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 @Suppress("unused") // Used via reflection.
 class BuilderLambdaGradlePlugin : KotlinCompilerPluginSupportPlugin {
     override fun apply(target: Project) {
-        target.extensions.create("simplePlugin", BuilderLambdaGradleExtension::class.java)
+        target.extensions.create("builderLambdaPlugin", BuilderLambdaGradleExtension::class.java)
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
@@ -31,7 +31,7 @@ class BuilderLambdaGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
         kotlinCompilation.defaultSourceSet.dependencies {
             // Add annotations library to all compilations.
-            implementation(BuildConfig.ANNOTATIONS_LIBRARY_COORDINATES)
+            compileOnly(BuildConfig.ANNOTATIONS_LIBRARY_COORDINATES)
         }
 
         kotlinCompilation.compileTaskProvider.configure {

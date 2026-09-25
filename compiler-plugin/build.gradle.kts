@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.gradle.java.test.fixtures)
     alias(libs.plugins.node.gradle)
     alias(libs.plugins.gradle.idea)
+    alias(libs.plugins.publish)
 }
 
 project.plugins.apply(D8Plugin::class.java)
@@ -156,4 +157,20 @@ fun Test.setLibraryProperty(propName: String, jarName: String) {
         ?.absolutePath
         ?: return
     systemProperty(propName, path)
+}
+
+if (project.findProperty("onlyLocal")?.toString()?.toBooleanStrict() != true) {
+    mavenPublishing {
+        publishToMavenCentral(automaticRelease = true)
+        signAllPublications()
+    }
+} else {
+    publishing {
+        repositories {
+            maven {
+                name = "localPluginRepository"
+                url = uri("${rootProject.projectDir.absolutePath}/build/local-plugin-repository")
+            }
+        }
+    }
 }

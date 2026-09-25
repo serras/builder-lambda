@@ -1,31 +1,54 @@
-# Kotlin Compiler Plugin template
+# Buider Lambda Kotlin plug-in
 
-This is a template project for writing a compiler plugin for the Kotlin compiler.
+> Java builders, the way Kotliners like them
 
-## Details
+> [!WARNING]
+> The plug-in is not yet published in Maven Central or Gradle Marketplace.
 
-This project has three modules:
-- The [`:compiler-plugin`](compiler-plugin/src) module contains the compiler plugin itself.
-- The [`:plugin-annotations`](support-lib/src/commonMain/kotlin) module contains annotations which can be used in
-user code for interacting with compiler plugin.
-- The [`:gradle-plugin`](gradle-plugin/src) module contains a simple Gradle plugin to add the compiler plugin and
-annotation dependency to a Kotlin project. 
+The [builder pattern](https://projectlombok.org/features/Builder) is very common in the Java world.
+However, using them in Kotlin usually leads to non-idiomatic code.
 
-Extension point registration:
-- K2 Frontend (FIR) extensions can be registered in `SimplePluginRegistrar`.
-- All other extensions (including K1 frontend and backend) can be registered in `SimplePluginComponentRegistrar`.
+```kotlin
+Config.builder()
+      .hostname("localhost")
+      .port(8080)
+      .build()
+```
 
-## Tests
+Using this compiler plug-in, you get a much nicer syntax,
 
-The [Kotlin compiler test framework][test-framework] is set up for this project.
-To create a new test, add a new `.kt` file in a [compiler-plugin/testData](compiler-plugin/testData) sub-directory:
-`testData/box` for codegen tests and `testData/diagnostics` for diagnostics tests.
-The generated JUnit 5 test classes will be updated automatically when tests are next run.
-They can be manually updated with the `generateTests` Gradle task as well.
-To aid in running tests, it is recommended to install the [Kotlin Compiler DevKit][test-plugin] IntelliJ plugin,
-which is pre-configured in this repository.
+```kotlin
+build<Config, *> {  // alas, the * is needed
+    hostname = "localhost"
+    port = 8080
+}
+```
 
-[//]: # (Links)
+Although the plug-in requires a supporting library for the `build` function,
+this is a _compile-only_ dependency. The plug-in rewrites the call using `build`
+to a sequence of calls on the builder. In other words, you write the code
+in the second snippet, and get code generates as in the first one.
 
-[test-framework]: https://github.com/JetBrains/kotlin/blob/master/compiler/test-infrastructure/ReadMe.md
-[test-plugin]: https://github.com/JetBrains/kotlin-compiler-devkit
+**Required arguments.**
+Arguments required for the initial call to `build` are turned into _required_
+arguments. Those required arguments must be present, and must  be given at 
+the very beginning of the block, before anything else is set.
+
+**Singular for collections.**
+When the type of a property is a collection type, builders sometimes
+provide [singular methods](https://projectlombok.org/features/Builder#singular)
+for more quickly adding a value. The plug-in is aware of this pattern,
+and exposes those as functions, instead of as setters.
+
+```java
+// 'authors' is a List<String>
+Book.builder().title("Wow!").author("me").author("you").build()
+```
+
+```kotlin
+build<Book, *> {
+    title = "Wow!"
+    author("me")
+    author("you")
+}
+```

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.buildconfig)
     alias(libs.plugins.gradle.plugin)
+    id("com.gradle.plugin-publish") version "2.2.1"
 }
 
 sourceSets {
@@ -41,10 +42,21 @@ buildConfig {
 gradlePlugin {
     plugins {
         create("BuilderLambdaPlugin") {
-            id = rootProject.group.toString()
+            id = "com.serranofp.builder.lambda"
             displayName = "BuilderLambdaPlugin"
             description = "BuilderLambdaPlugin"
             implementationClass = "com.serranofp.builder.lambda.BuilderLambdaGradlePlugin"
+        }
+    }
+}
+
+if (project.findProperty("onlyLocal")?.toString()?.toBooleanStrict() == true) {
+    publishing {
+        repositories {
+            maven {
+                name = "localPluginRepository"
+                url = uri("${rootProject.projectDir.absolutePath}/build/local-plugin-repository")
+            }
         }
     }
 }

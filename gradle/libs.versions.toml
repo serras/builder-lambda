@@ -3,6 +3,7 @@ kotlin = "2.4.20"
 junit = "4.13.2"
 buildconfig = "6.1.0"
 node-gradle = "7.1.0"
+publish = "0.37.0"
 
 [libraries]
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
@@ -25,6 +26,7 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig"}
 node-gradle = { id = "com.github.node-gradle.node", version.ref = "node-gradle" }
+publish = { id = "com.vanniktech.maven.publish", version.ref = "publish" }
 
 gradle-java-test-fixtures = { id = "java-test-fixtures" }
 gradle-idea = { id = "idea" }
