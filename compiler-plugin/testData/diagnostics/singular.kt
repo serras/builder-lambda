@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CompanionBlocksAndExtensions
+// FIR_DUMP
 
 package foo.bar
 

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isStatic
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 val BUILDER_LAMBDA_INITIAL_CALL by IrStatementOriginImpl
+val BUILDER_LAMBDA_ACCUMULATION_CALL by IrStatementOriginImpl
 val BUILDER_LAMBDA_FINAL_CALL by IrStatementOriginImpl
 val BUILDER_LAMBDA_VAR by IrDeclarationOriginImpl.Synthetic
 
@@ -81,23 +83,48 @@ class CallTransformer(val factory: IrFactory) : IrElementTransformerVoid() {
             }
         )
 
-        while (iterator.hasNext() && requiredArguments.size < builderConstructor.parameters.size) {
+        while (iterator.hasNext()) {
             val statement = iterator.next()
 
             if (statement !is IrCall || statement.symbol !in functionsAndSetters) {
                 newBody.statements += statement
                 continue
             }
+
+            val symbol = statement.symbol
+            val property = symbol.owner.correspondingPropertySymbol
+            val [name, argumentsToCall] = when {
+                // this means it is a setter
+                property != null -> property.owner.name to listOf(statement.arguments[1]!!)
+                else -> symbol.owner.name to statement.arguments.filterNotNull()
+            }
+            val corresponding = builderClass.findCorresponding(name, symbol.owner.parameters.drop(1).map { it.type })
+            newBody.statements += IrSetValueImpl(
+                startOffset = runBody.startOffset, endOffset = runBody.endOffset, origin = BUILDER_LAMBDA_ACCUMULATION_CALL,
+                type = corresponding.returnType, symbol = theVariableSymbol,
+                value = IrCallImpl(
+                    startOffset = runBody.startOffset, endOffset = runBody.endOffset,
+                    type = corresponding.returnType, symbol = corresponding.symbol,
+                ).apply {
+                    arguments.clear()
+                    arguments.add(IrGetValueImpl(
+                        startOffset = runBody.startOffset, endOffset = runBody.endOffset, origin = BUILDER_LAMBDA_ACCUMULATION_CALL,
+                        type = builderConstructor.returnType, symbol = theVariableSymbol
+                    ))
+                    arguments.addAll(argumentsToCall)
+                }
+            )
         }
 
         val lastCall = IrCallImpl(
             startOffset = runBody.startOffset, endOffset = runBody.endOffset,
             type = builderBuild.returnType, symbol = builderBuild.symbol
         ).apply {
-            dispatchReceiver = IrGetValueImpl(
+            arguments.clear()
+            arguments.add(IrGetValueImpl(
                 startOffset = runBody.startOffset, endOffset = runBody.endOffset, origin = BUILDER_LAMBDA_FINAL_CALL,
                 type = builderConstructor.returnType, symbol = theVariableSymbol
-            )
+            ))
         }
         newBody.statements += IrReturnImpl(
             startOffset = runBody.startOffset, endOffset = runBody.endOffset,
@@ -127,4 +154,9 @@ class CallTransformer(val factory: IrFactory) : IrElementTransformerVoid() {
 
     fun IrClass.functionsAndSetters(): List<IrSimpleFunction> =
         declarations.filterIsInstance<IrSimpleFunction>() + declarations.filterIsInstance<IrProperty>().mapNotNull { it.setter }
+
+    fun IrClass.findCorresponding(name: Name, parameterTypes: List<IrType>): IrSimpleFunction =
+        declarations.filterIsInstance<IrSimpleFunction>().first {
+            it.name == name && it.parameters.drop(1).map { it.type } == parameterTypes
+        }
 }

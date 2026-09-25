@@ -4,10 +4,7 @@ import com.serranofp.builder.lambda.services.configurePlugin
 import org.jetbrains.kotlin.js.test.runners.AbstractJsDiagnosticWithBackendTestBase
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.runners.AbstractFirPhasedDiagnosticTest
 import org.jetbrains.kotlin.test.services.EnvironmentBasedStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 
@@ -28,7 +25,6 @@ open class AbstractJsDiagnosticTest : AbstractJsDiagnosticWithBackendTestBase(Fi
          * All of them are located in `org.jetbrains.kotlin.test.directives` package
          */
         defaultDirectives {
-            +FirDiagnosticsDirectives.FIR_DUMP
             +FirDiagnosticsDirectives.DISABLE_GENERATED_FIR_TAGS
         }
 
