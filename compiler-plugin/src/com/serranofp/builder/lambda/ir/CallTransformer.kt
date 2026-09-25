@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.name.Name
 val BUILDER_LAMBDA_INITIAL_CALL by IrStatementOriginImpl
 val BUILDER_LAMBDA_ACCUMULATION_CALL by IrStatementOriginImpl
 val BUILDER_LAMBDA_FINAL_CALL by IrStatementOriginImpl
+val BUILDER_LAMBDA_RUN_LAMBDA by IrDeclarationOriginImpl.Synthetic
+val BUILDER_LAMBDA_RUN by IrStatementOriginImpl
 val BUILDER_LAMBDA_VAR by IrDeclarationOriginImpl.Synthetic
 
 class CallTransformerExtension : IrGenerationExtension {
@@ -42,14 +45,29 @@ class CallTransformer(val factory: IrFactory) : IrElementTransformerVoid() {
         val builderConstructor = builderClass.constructors.single()
         val builderBuild = builderClass.declarations.find { it is IrFunction && it.name == Name.identifier("build") } as IrSimpleFunction
 
+        val newRunArgumentSymbol = IrSimpleFunctionSymbolImpl()
+        val newRunArgument = factory.createSimpleFunction(
+            startOffset = runArgument.startOffset, endOffset = runArgument.endOffset,
+            origin = BUILDER_LAMBDA_RUN_LAMBDA, name = Name.special("<build-run-lambda>"),
+            returnType = runArgument.returnType, symbol = newRunArgumentSymbol,
+            visibility = runArgument.visibility, isInline = runArgument.isInline,
+            isExpect = runArgument.isExpect, isSuspend = runArgument.isSuspend,
+            modality = runArgument.modality, isTailrec = runArgument.isTailrec,
+            isOperator = runArgument.isOperator, isInfix = runArgument.isInfix,
+        ).apply {
+            // copyAttributes(runArgument)
+            parent = runArgument.parent
+        }
+
         val newBody = factory.createBlockBody(startOffset = runBody.startOffset, endOffset = runBody.endOffset)
+        newRunArgument.body = newBody
 
         val theVariableSymbol = IrVariableSymbolImpl()
         val theVariable = IrVariableImpl(
             startOffset = runBody.startOffset, endOffset = runBody.endOffset, origin = BUILDER_LAMBDA_VAR,
             symbol = theVariableSymbol, name = Name.special("<builder>"), type = builderConstructor.returnType,
             isVar = true, isConst = false, isLateinit = false
-        ).apply { parent = runArgument }
+        ).apply { parent = newRunArgument}
         newBody.statements += theVariable
 
         val iterator = buildBody.iterator()
@@ -128,11 +146,22 @@ class CallTransformer(val factory: IrFactory) : IrElementTransformerVoid() {
         }
         newBody.statements += IrReturnImpl(
             startOffset = runBody.startOffset, endOffset = runBody.endOffset,
-            type = builderBuild.returnType, value = lastCall, returnTargetSymbol = runArgument.symbol
+            type = builderBuild.returnType, value = lastCall, returnTargetSymbol = newRunArgumentSymbol
         )
 
-        runArgument.body = newBody
-        return expression
+        return IrCallImpl(
+            startOffset = expression.startOffset, endOffset = expression.endOffset,
+            type = expression.type, symbol = expression.symbol,
+        ).apply {
+            typeArguments.clear()
+            typeArguments.addAll(expression.typeArguments)
+            arguments.clear()
+            arguments.add(IrFunctionExpressionImpl(
+                startOffset = expression.startOffset, endOffset = expression.endOffset,
+                function = newRunArgument, origin = BUILDER_LAMBDA_RUN,
+                type = expression.arguments.single()!!.type,
+            ))
+        }
     }
 
     data class BuildCallInfo(val runArgument: IrSimpleFunction, val localBuilderClass: IrClass, val typeToBuild: IrClass, val buildBody: List<IrStatement>)
