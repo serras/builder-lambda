@@ -6,12 +6,15 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.plugin.createMemberProperty
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
+@OptIn(SymbolInternals::class)
 class MembersGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     data object Key : GeneratedDeclarationKey()
 
@@ -31,14 +34,14 @@ class MembersGenerator(session: FirSession) : FirDeclarationGenerationExtension(
         return callables[name].orEmpty().filterIsInstance<Category.CreatesProperty>().map { category ->
             when (category) {
                 is Category.Constructor -> createMemberProperty(
-                    owner, Key, name, category.symbol.resolvedReturnType,
+                    owner, Key, name, category.symbol.fir.returnTypeRef.coneType,
                     isVal = false, hasBackingField = false
                 ) {
                     withGeneratedDefaultInitializer()
                 }.symbol
 
                 is Category.Property -> createMemberProperty(
-                    owner, Key, name, category.symbol.valueParameterSymbols.first().resolvedReturnType,
+                    owner, Key, name, category.symbol.valueParameterSymbols.first().fir.returnTypeRef.coneType,
                     isVal = false, hasBackingField = false
                 ) {
                     withGeneratedDefaultInitializer()
@@ -57,7 +60,7 @@ class MembersGenerator(session: FirSession) : FirDeclarationGenerationExtension(
                 owner, Key, name, session.builtinTypes.unitType.coneType
             ) {
                 for (p in category.symbol.valueParameterSymbols) {
-                    valueParameter(p.name, p.resolvedReturnType, isVararg = p.isVararg)
+                    valueParameter(p.name, p.fir.returnTypeRef.coneType, isVararg = p.isVararg)
                 }
             }.symbol
         }

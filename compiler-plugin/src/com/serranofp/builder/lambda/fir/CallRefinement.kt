@@ -39,7 +39,7 @@ class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(s
         val typeToBuild =  callInfo.typeArguments.firstOrNull()?.toConeTypeProjection()?.type ?: return callInfo.updateTypeArgumentToNothing()
         val classToBuild = typeToBuild.toClassSymbol(session) ?: return callInfo.updateTypeArgumentToNothing()
         val builderFunction = classToBuild.builderFunction(session) ?: return callInfo.updateTypeArgumentToNothing()
-        val builderClass = builderFunction.resolvedReturnType.toClassSymbol(session) ?: return callInfo.updateTypeArgumentToNothing()
+        val builderClass = builderFunction.resolvedAndJavaizedReturnTypeSymbol(session) ?: return callInfo.updateTypeArgumentToNothing()
 
         val refinedTypeId = localClassId(Name.identifier("Local${classToBuild.name.asStringStripSpecialMarkers()}Builder"))
         val refinedTypeSymbol = FirRegularClassSymbol(refinedTypeId)

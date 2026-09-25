@@ -33,7 +33,7 @@ object Checker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
         val followsBuilderPattern =
             builderClassConstructor != null && builderBuildFunction != null &&
-                    typeToBuild != null && builderBuildFunction.resolvedReturnType.classId == typeToBuild.classId
+                    typeToBuild != null && builderBuildFunction.resolvedAndJavaizedReturnTypeSymbol(context.session)?.classId == typeToBuild.classId
 
         if (!followsBuilderPattern) {
             when {

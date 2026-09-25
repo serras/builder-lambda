@@ -1,18 +1,10 @@
 package com.serranofp.builder.lambda.fir
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.caches.FirCache
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.caches.getValue
-import org.jetbrains.kotlin.fir.declarations.constructors
-import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
-import org.jetbrains.kotlin.fir.resolve.getSuperTypes
-import org.jetbrains.kotlin.fir.resolve.toClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.caches.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class CallablesCache(val session: FirSession) {
@@ -26,16 +18,17 @@ class CallablesCache(val session: FirSession) {
         includeConstructors: Boolean,
         storage: MutableMap<Name, MutableList<Category>> = mutableMapOf(),
     ): Map<Name, List<Category>> {
+        val scope = unsubstitutedScope(session, ScopeSession(), true, null)
         if (includeConstructors) {
-            constructors(session).singleOrNull()?.let { constructor ->
+            scope.getDeclaredConstructors().singleOrNull()?.let { constructor ->
                 for (parameter in constructor.valueParameterSymbols) {
                     storage.getOrPutIfMissing(parameter.name, { mutableListOf() }).add(Category.Constructor(parameter))
                 }
             }
         }
-        processAllDeclaredCallables(session) processor@{ callable ->
+        scope.processAllCallables processor@{ callable ->
             when {
-                callable.resolvedReturnType.classId != this.classId -> {}
+                callable.resolvedAndJavaizedReturnTypeSymbol(session)?.classId != this.classId -> {}
                 callable !is FirFunctionSymbol<*> -> {}
                 callable.valueParameterSymbols.any { it.isVararg } -> {}
                 // do not add 'clearXX' things
@@ -43,7 +36,10 @@ class CallablesCache(val session: FirSession) {
                 callable.valueParameterSymbols.size != 1 -> {
                     storage.getOrPutIfMissing(callable.name, { mutableListOf() }).add(Category.Function(callable))
                 }
-                hasPluralFor(callable.name) -> {
+                scope.hasSameNameFor(callable) -> {
+                    storage.getOrPutIfMissing(callable.name, { mutableListOf() }).add(Category.Function(callable))
+                }
+                scope.hasPluralFor(callable.name) -> {
                     storage.getOrPutIfMissing(callable.name, { mutableListOf() }).add(Category.Singular(callable))
                 }
                 else -> {
@@ -51,17 +47,26 @@ class CallablesCache(val session: FirSession) {
                 }
             }
         }
-        getSuperTypes(session).forEach { superType ->
-            superType.toClassSymbol(session)?.computeCallables(includeConstructors = false, storage)
-        }
+        // getSuperTypes(session).forEach { superType ->
+        //     superType.toClassSymbol(session)?.computeCallables(includeConstructors = false, storage)
+        // }
         return storage
     }
 
-    fun FirClassSymbol<*>.hasPluralFor(name: Name): Boolean {
+    fun FirTypeScope.hasSameNameFor(symbol: FirCallableSymbol<*>): Boolean {
+        var found = false
+        processFunctionsByName(symbol.name) processor@{
+            if (found) return@processor
+            if (it != symbol) { found = true }
+        }
+        return found
+    }
+
+    fun FirTypeScope.hasPluralFor(name: Name): Boolean {
         if (name.isSpecial) return false
         val singularName = name.asString()
         var found = false
-        processAllDeclaredCallables(session) processor@{
+        processAllCallables processor@{
             if (found || it.name.isSpecial) return@processor
             val thisName = it.name.asString()
             if (Singulars.from(thisName) == singularName) {
