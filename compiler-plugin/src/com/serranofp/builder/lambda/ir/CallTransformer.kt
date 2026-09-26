@@ -96,12 +96,11 @@ class CallTransformer : IrElementTransformerVoid() {
             }
 
             val symbol = statement.symbol
-            val property = symbol.owner.correspondingPropertySymbol
-            val [name, argumentsToCall] = when {
-                // this means it is a setter
-                property != null -> property.owner.name to listOf(statement.arguments[1]!!)
-                else -> symbol.owner.name to statement.arguments.filterNotNull()
+            val name = when (val property = symbol.owner.correspondingPropertySymbol) {
+                null -> symbol.owner.name
+                else -> property.owner.name // it is a setter
             }
+            val argumentsToCall = statement.arguments.drop(1).filterNotNull() // drop dispatch
             val corresponding = builderClass.findCorresponding(name, symbol.owner.parameters.drop(1).map { it.type })
             newBody.statements += IrSetValueImpl(
                 startOffset = runBody.startOffset, endOffset = runBody.endOffset, origin = BUILDER_LAMBDA_ACCUMULATION_CALL,
