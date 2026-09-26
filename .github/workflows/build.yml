@@ -43,4 +43,4 @@ jobs:
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
 
-      - run: ./test-optics-gradle-plugin.sh
+      - run: ./test.sh
