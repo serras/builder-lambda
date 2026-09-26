@@ -40,6 +40,9 @@ buildConfig {
 }
 
 gradlePlugin {
+    website = "https://serranofp.com"
+    vcsUrl = "https://github.com/serras/builder-lambda"
+
     plugins {
         create("BuilderLambdaPlugin") {
             id = "com.serranofp.builder.lambda"
