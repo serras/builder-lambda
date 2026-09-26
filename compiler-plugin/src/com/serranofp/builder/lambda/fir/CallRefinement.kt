@@ -3,6 +3,7 @@ package com.serranofp.builder.lambda.fir
 import com.serranofp.builder.lambda.BuilderLambdaIds
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
@@ -61,11 +62,7 @@ class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(s
         // transform * => the local class
         callInfo.updateTypeArgument(
             buildResolvedTypeRef {
-                coneType = ConeClassLikeTypeImpl(
-                    refinedTypeDeclaration.symbol.toLookupTag(),
-                    arrayOf(),
-                    isMarkedNullable = false
-                )
+                coneType = refinedTypeDeclaration.defaultType()
             }
         )
 
@@ -80,7 +77,7 @@ class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(s
     }
 
     fun CallInfo.updateTypeArgument(typeRef: FirTypeRef) {
-        val secondArgument = typeArguments[1]
+        val secondArgument = typeArguments.getOrElse(1) { return }
         (callSite as? FirFunctionCall)?.transformTypeArguments(object : FirTransformer<Nothing?>() {
             override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
                 return if (element == secondArgument) {
@@ -147,10 +144,10 @@ class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(s
                 isLambda = true
                 hasExplicitParameterList = false
                 typeRef = buildResolvedTypeRef {
-                    coneType = ConeClassLikeTypeImpl(
-                        ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function0"))),
-                        typeArguments = arrayOf(returnType),
-                        isMarkedNullable = false
+                    coneType = session.typeContext.createSimpleType(
+                        constructor = session.typeContext.getNonReflectFunctionTypeConstructor(0, FunctionTypeKind.Function),
+                        arguments = listOf(returnType),
+                        nullable = false,
                     )
                 }
                 invocationKind = EventOccurrencesRange.EXACTLY_ONCE
