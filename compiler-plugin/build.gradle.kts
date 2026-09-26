@@ -162,7 +162,6 @@ fun Test.setLibraryProperty(propName: String, jarName: String) {
 if (project.findProperty("onlyLocal")?.toString()?.toBooleanStrict() != true) {
     mavenPublishing {
         publishToMavenCentral(automaticRelease = true)
-        pomFromGradleProperties()
         signAllPublications()
     }
 } else {

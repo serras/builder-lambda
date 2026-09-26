@@ -52,7 +52,6 @@ kotlin {
 if (project.findProperty("onlyLocal")?.toString()?.toBooleanStrict() != true) {
     mavenPublishing {
         publishToMavenCentral(automaticRelease = true)
-        pomFromGradleProperties()
         signAllPublications()
     }
 } else {
