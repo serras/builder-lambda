@@ -46,9 +46,10 @@ gradlePlugin {
     plugins {
         create("BuilderLambdaPlugin") {
             id = "com.serranofp.builder.lambda"
-            displayName = "BuilderLambdaPlugin"
-            description = "BuilderLambdaPlugin"
+            displayName = "Builder Lambda Kotlin plug-in"
+            description = "Java builders, the way Kotliners like them"
             implementationClass = "com.serranofp.builder.lambda.BuilderLambdaGradlePlugin"
+            tags = setOf("builder", "kotlin")
         }
     }
 }
