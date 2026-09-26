@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.4.20"
 junit = "4.13.2"
-buildconfig = "6.1.0"
+buildconfig = "6.1.1"
 node-gradle = "7.1.0"
 publish = "0.37.0"
 

@@ -1,0 +1,4 @@
+public final class com/serranofp/builder/lambda/BuilderKt {
+	public static final fun build (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+}
+
