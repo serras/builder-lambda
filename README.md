@@ -2,32 +2,52 @@
 
 > Java builders, the way Kotliners like them
 
-> [!WARNING]
-> The plug-in is not yet published in Maven Central or Gradle Marketplace.
-
 The [builder pattern](https://projectlombok.org/features/Builder) is very common in the Java world.
 However, using them in Kotlin usually leads to non-idiomatic code.
 
 ```kotlin
-Config.builder()
-      .hostname("localhost")
-      .port(8080)
-      .build()
+Config.builder().hostname("localhost").port(8080).build()
 ```
 
 Using this compiler plug-in, you get a much nicer syntax,
 
 ```kotlin
+import com.serranofp.builder.lambda.build
+
 build<Config, *> {  // alas, the * is needed
     hostname = "localhost"
     port = 8080
 }
 ```
 
+**Apply the plug-in**.
+Simply add it to your `plugins` block in your Gradle file,
+
+```kotlin
+id("com.serranofp.builder.lambda") version "<current-release>"
+```
+
+and import `com.serranofp.builder.lambda.build` whenever you need to use a builder.
+
 Although the plug-in requires a supporting library for the `build` function,
 this is a _compile-only_ dependency. The plug-in rewrites the call using `build`
-to a sequence of calls on the builder. In other words, you write the code
-in the second snippet, and get code generates as in the first one.
+to a sequence of calls on the builder, without any additional runtime dependency.
+
+**IDE support**.
+You can get autocompletion and diagnostics right in IntelliJ
+if you allow compiler plug-ins from outside the Kotlin Team to run.
+To do so, go to _Help_ > _Edit Custom Properties..._, and add the following line
+to the file that opens:
+
+```properties
+kotlin.k2.only.bundled.compiler.plugins.enabled=false
+```
+
+Restart your IDE, and enjoy.
+
+![Completion with plug-in](img/complete.png)
+
+## Features
 
 **Required arguments.**
 Arguments required for the initial call to `build` are turned into _required_
