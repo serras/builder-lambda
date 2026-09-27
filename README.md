@@ -53,6 +53,7 @@ Restart your IDE, and enjoy.
 Arguments required for the initial call to `build` are turned into _required_
 arguments. Those required arguments must be present, and must  be given at 
 the very beginning of the block, before anything else is set.
+The plug-in reports errors otherwise, ensuring that builder calls are correct.
 
 **Singular for collections.**
 When the type of a property is a collection type, builders sometimes
@@ -72,3 +73,9 @@ build<Book, *> {
     author("you")
 }
 ```
+
+**`set`/`opt` naming convention.**
+Some projects (like [DJL](https://djl.ai/)) follow a slighly different
+convention for their builders, with `setXXX` marking required arguments,
+and `optXXX` marking optional ones.
+The plug-in also supports that convention.

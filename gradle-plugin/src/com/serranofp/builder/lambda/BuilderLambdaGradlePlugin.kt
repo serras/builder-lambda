@@ -37,6 +37,8 @@ class BuilderLambdaGradlePlugin : KotlinCompilerPluginSupportPlugin {
         kotlinCompilation.compileTaskProvider.configure {
             // Run this compiler plugin before Compose plugin.
             it.compilerOptions.freeCompilerArgs.add("-Xcompiler-plugin-order=${BuildConfig.KOTLIN_PLUGIN_ID}>androidx.compose.compiler.plugins.kotlin")
+            // Run this compiler plugin after Lombok plugin.
+            it.compilerOptions.freeCompilerArgs.add("-Xcompiler-plugin-order=org.jetbrains.kotlin.lombok>${BuildConfig.KOTLIN_PLUGIN_ID}")
         }
 
         return project.provider {

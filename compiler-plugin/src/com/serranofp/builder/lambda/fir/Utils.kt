@@ -4,6 +4,7 @@ import com.serranofp.builder.lambda.BuilderLambdaIds
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.staticScope
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.scopes.processAllClassifiers
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -33,8 +35,18 @@ import org.jetbrains.kotlin.name.Name
 
 internal fun FirClassSymbol<*>.builderFunction(session: FirSession): FirNamedFunctionSymbol? {
     var symbol: FirNamedFunctionSymbol? = null
-    this.staticScope(session, ScopeSession())?.processFunctionsByName(Name.identifier("builder")) {
+    val staticScope = this.staticScope(session, ScopeSession())
+    staticScope?.processFunctionsByName(Name.identifier("builder")) {
         if (it.isStatic) { symbol = it }
+    }
+    if (symbol == null) {
+        // try to find in companion object
+        staticScope?.processAllClassifiers { companion ->
+            if (companion is FirClassSymbol<*> && companion.isCompanion) {
+                companion.unsubstitutedScope(session, ScopeSession(), true, null)
+                    .processFunctionsByName(Name.identifier("builder")) { symbol = it }
+            }
+        }
     }
     return symbol
 }

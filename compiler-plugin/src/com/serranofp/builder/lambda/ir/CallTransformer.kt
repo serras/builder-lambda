@@ -41,7 +41,7 @@ class CallTransformer : IrElementTransformerVoid() {
 
         val builderStatic = typeToBuild.declarations.find { it is IrFunction && it.isStatic && it.name == Name.identifier("builder") } as IrSimpleFunction
         val builderClass = (builderStatic.returnType as IrSimpleType).classifier.owner as IrClass
-        val builderConstructor = builderClass.constructors.single()
+        val builderConstructor = builderClass.constructors.singleOrNull() ?: builderStatic
         val builderBuild = builderClass.declarations.find { it is IrFunction && it.name == Name.identifier("build") } as IrSimpleFunction
 
         val newBody = IrBlockImpl(
@@ -73,10 +73,8 @@ class CallTransformer : IrElementTransformerVoid() {
             }
         }
 
-        newBody.statements += IrSetValueImpl(
-            startOffset = runBody.startOffset, endOffset = runBody.endOffset, origin = BUILDER_LAMBDA_INITIAL_CALL,
-            type = builderConstructor.returnType, symbol = theVariableSymbol,
-            value = IrConstructorCallImpl(
+        val construct = when (builderConstructor) {
+            is IrConstructor -> IrConstructorCallImpl(
                 startOffset = runBody.startOffset, endOffset = runBody.endOffset,
                 type = builderConstructor.returnType, symbol = builderConstructor.symbol,
                 typeArgumentsCount = 0, constructorTypeArgumentsCount = 0
@@ -86,6 +84,16 @@ class CallTransformer : IrElementTransformerVoid() {
                     arguments.add(requiredArguments[parameter]!!)
                 }
             }
+            is IrSimpleFunction -> IrCallImpl(
+                startOffset = runBody.startOffset, endOffset = runBody.endOffset,
+                type = builderConstructor.returnType, symbol = builderConstructor.symbol,
+            )
+        }
+
+        newBody.statements += IrSetValueImpl(
+            startOffset = runBody.startOffset, endOffset = runBody.endOffset, origin = BUILDER_LAMBDA_INITIAL_CALL,
+            type = builderConstructor.returnType, symbol = theVariableSymbol,
+            value = construct
         )
 
         while (iterator.hasNext()) {
