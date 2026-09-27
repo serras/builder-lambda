@@ -11,5 +11,5 @@ repositories {
 
 dependencies {
     implementation("org.springframework.ai:spring-ai-ollama:2.0.1")
-    implementation("ai.djl.fasttext:fasttext-engine:0.36.0")
+    implementation("ai.djl.fasttext:fasttext-engine:0.38.0")
 }
