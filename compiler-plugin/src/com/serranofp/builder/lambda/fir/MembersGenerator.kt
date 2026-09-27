@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.plugin.createMemberProperty
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.coneType
@@ -40,8 +41,8 @@ class MembersGenerator(session: FirSession) : FirDeclarationGenerationExtension(
                     withGeneratedDefaultInitializer()
                 }.symbol
 
-                is Category.Property -> createMemberProperty(
-                    owner, Key, name, category.symbol.valueParameterSymbols.first().fir.returnTypeRef.coneType,
+                is Category.Property, is Category.Required -> createMemberProperty(
+                    owner, Key, name, (category.symbol as FirFunctionSymbol<*>).valueParameterSymbols.first().fir.returnTypeRef.coneType,
                     isVal = false, hasBackingField = false
                 ) {
                     withGeneratedDefaultInitializer()

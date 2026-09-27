@@ -6,24 +6,49 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 
 class CallablesCache(val session: FirSession) {
     private val callablesCache: FirCache<FirClassSymbol<*>, Map<Name, List<Category>>?, Nothing?> =
-        session.firCachesFactory.createCache { k, _ -> k.computeCallables(includeConstructors = true) }
+        session.firCachesFactory.createCache { k, _ -> k.computeCallables() }
 
     operator fun get(symbol: FirClassSymbol<*>): Map<Name, List<Category>>? = callablesCache.getValue(symbol)
 
-    @OptIn(ExperimentalStdlibApi::class)
-    fun FirClassSymbol<*>.computeCallables(
-        includeConstructors: Boolean,
-        storage: MutableMap<Name, MutableList<Category>> = mutableMapOf(),
-    ): Map<Name, List<Category>> {
+    enum class BuilderKind {
+        Direct,
+        SetOpt,
+    }
+
+    fun FirClassSymbol<*>.computeBuilderKind(): BuilderKind {
         val scope = unsubstitutedScope(session, ScopeSession(), true, null)
-        if (includeConstructors) {
-            scope.getDeclaredConstructors().singleOrNull()?.let { constructor ->
-                for (parameter in constructor.valueParameterSymbols) {
-                    storage.getOrPutIfMissing(parameter.name, { mutableListOf() }).add(Category.Constructor(parameter))
+
+        var allSetOpt = true
+        scope.processAllCallables processor@{ callable ->
+            if (!allSetOpt) return@processor
+            if (callable.resolvedAndJavaizedReturnTypeSymbol(session)?.classId == this.classId) {
+                val name = callable.name.asString()
+                if (!name.startsWith("set") && !name.startsWith("opt")) {
+                    allSetOpt = false
                 }
+            }
+        }
+
+        return if (allSetOpt) BuilderKind.SetOpt else BuilderKind.Direct
+    }
+
+    fun FirClassSymbol<*>.computeCallables(): Map<Name, List<Category>> =
+        when (computeBuilderKind()) {
+            BuilderKind.Direct -> computeCallablesDirect()
+            BuilderKind.SetOpt -> computeCallablesSetOpt()
+        }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun FirClassSymbol<*>.computeCallablesDirect(): Map<Name, List<Category>> {
+        val scope = unsubstitutedScope(session, ScopeSession(), true, null)
+        val storage = mutableMapOf<Name, MutableList<Category>>()
+        scope.getDeclaredConstructors().singleOrNull()?.let { constructor ->
+            for (parameter in constructor.valueParameterSymbols) {
+                storage.getOrPutIfMissing(parameter.name, { mutableListOf() }).add(Category.Constructor(parameter))
             }
         }
         scope.processAllCallables processor@{ callable ->
@@ -47,9 +72,34 @@ class CallablesCache(val session: FirSession) {
                 }
             }
         }
-        // getSuperTypes(session).forEach { superType ->
-        //     superType.toClassSymbol(session)?.computeCallables(includeConstructors = false, storage)
-        // }
+        return storage
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun FirClassSymbol<*>.computeCallablesSetOpt(): Map<Name, List<Category>> {
+        val scope = unsubstitutedScope(session, ScopeSession(), true, null)
+        val storage = mutableMapOf<Name, MutableList<Category>>()
+        scope.processAllCallables processor@{ callable ->
+            val name = callable.name
+            val nameS = name.asString()
+            when {
+                callable.resolvedAndJavaizedReturnTypeSymbol(session)?.classId != this.classId -> {}
+                callable !is FirFunctionSymbol<*> -> {}
+                callable.valueParameterSymbols.any { it.isVararg } -> {}
+                nameS.startsWith("set") -> {
+                    val newName = Name.identifier(nameS.drop(3).decapitalizeAsciiOnly())
+                    storage.getOrPutIfMissing(newName, { mutableListOf() }).add(Category.Required(callable))
+                }
+                callable.valueParameterSymbols.size != 1 -> {
+                    val newName = Name.identifier(nameS.drop(3).decapitalizeAsciiOnly())
+                    storage.getOrPutIfMissing(newName, { mutableListOf() }).add(Category.Function(callable))
+                }
+                else -> {
+                    val newName = Name.identifier(nameS.drop(3).decapitalizeAsciiOnly())
+                    storage.getOrPutIfMissing(newName, { mutableListOf() }).add(Category.Property(callable))
+                }
+            }
+        }
         return storage
     }
 
@@ -76,10 +126,10 @@ class CallablesCache(val session: FirSession) {
         return found
     }
 
-    fun getConstructorParameters(symbol: FirClassSymbol<*>): List<FirValueParameterSymbol> =
-        get(symbol).orEmpty().flatMap { [_, categories] ->
-            categories.mapNotNull { if (it is Category.Constructor) it.symbol else null }
-        }
+    fun getRequiredNames(symbol: FirClassSymbol<*>): Set<Name> =
+        get(symbol).orEmpty().filterValues { categories ->
+            categories.any { it is Category.Constructor || it is Category.Required }
+        }.keys
 }
 
 sealed interface Category {
@@ -87,6 +137,7 @@ sealed interface Category {
 
     sealed interface CreatesProperty : Category
     data class Property(override val symbol: FirFunctionSymbol<*>) : CreatesProperty
+    data class Required(override val symbol: FirFunctionSymbol<*>) : CreatesProperty
     data class Constructor(override val symbol: FirValueParameterSymbol) : CreatesProperty
 
     sealed interface CreatesFunction : Category {

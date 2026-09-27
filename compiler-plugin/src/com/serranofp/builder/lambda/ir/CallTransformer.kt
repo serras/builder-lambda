@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 val BUILDER_LAMBDA_INITIAL_CALL by IrStatementOriginImpl
 val BUILDER_LAMBDA_ACCUMULATION_CALL by IrStatementOriginImpl
@@ -154,8 +155,16 @@ class CallTransformer : IrElementTransformerVoid() {
     fun IrClass.functionsAndSetters(): List<IrSimpleFunction> =
         declarations.filterIsInstance<IrSimpleFunction>() + declarations.filterIsInstance<IrProperty>().mapNotNull { it.setter }
 
-    fun IrClass.findCorresponding(name: Name, parameterTypes: List<IrType>): IrSimpleFunction =
-        declarations.filterIsInstance<IrSimpleFunction>().first {
-            it.name == name && it.parameters.drop(1).map { it.type } == parameterTypes
+    fun IrClass.findCorresponding(name: Name, parameterTypes: List<IrType>): IrSimpleFunction {
+        val functions = declarations.filterIsInstance<IrSimpleFunction>().filter {
+            it.parameters.drop(1).map { it.type } == parameterTypes
         }
+        return functions.firstOrNull { it.name == name } ?: functions.first { compatibleSetOptName(it.name, name) }
+    }
+
+    fun compatibleSetOptName(fnName: Name, builderName: Name): Boolean {
+        val fnNameS = fnName.asString()
+        val builderNameS = builderName.asString().capitalizeAsciiOnly()
+        return fnNameS == "set$builderNameS" || fnNameS == "opt$builderNameS"
+    }
 }

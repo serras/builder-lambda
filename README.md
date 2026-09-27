@@ -1,4 +1,4 @@
-# Buider Lambda Kotlin plug-in
+# Buider Lambda Kotlin plug-in ![Latest release badge](https://img.shields.io/maven-central/v/com.serranofp/builder-lambda-support-lib?color=4caf50&label=latest%20release)
 
 > Java builders, the way Kotliners like them
 
