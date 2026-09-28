@@ -1,0 +1,334 @@
+FILE fqName:foo.bar fileName:/overload.kt
+  CLASS CLASS name:A modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.A
+    PROPERTY name:length visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'length: kotlin.Int declared in foo.bar.A.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-length> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A
+        correspondingProperty: PROPERTY name:length visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-length> (): kotlin.Int declared in foo.bar.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.<get-length>' type=foo.bar.A origin=null
+    PROPERTY name:title visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:title type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'title: kotlin.String declared in foo.bar.A.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-title> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A
+        correspondingProperty: PROPERTY name:title visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-title> (): kotlin.String declared in foo.bar.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:title type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.<get-title>' type=foo.bar.A origin=null
+    PROPERTY name:size visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'size: kotlin.Int declared in foo.bar.A.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-size> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A
+        correspondingProperty: PROPERTY name:size visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-size> (): kotlin.Int declared in foo.bar.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.<get-size>' type=foo.bar.A origin=null
+    CLASS CLASS name:Builder modality:FINAL visibility:public superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.A.Builder
+      PROPERTY name:length visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'length: kotlin.Int declared in foo.bar.A.Builder.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-length> visibility:public modality:FINAL returnType:kotlin.Int
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A.Builder
+          correspondingProperty: PROPERTY name:length visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-length> (): kotlin.Int declared in foo.bar.A.Builder'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                receiver: GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.<get-length>' type=foo.bar.A.Builder origin=null
+      PROPERTY name:_title visibility:private modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:_title type:kotlin.String visibility:private
+          EXPRESSION_BODY
+            CONST String type=kotlin.String value=""
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_title> visibility:private modality:FINAL returnType:kotlin.String
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A.Builder
+          correspondingProperty: PROPERTY name:_title visibility:private modality:FINAL [var]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='private final fun <get-_title> (): kotlin.String declared in foo.bar.A.Builder'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:_title type:kotlin.String visibility:private' type=kotlin.String origin=null
+                receiver: GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.<get-_title>' type=foo.bar.A.Builder origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-_title> visibility:private modality:FINAL returnType:kotlin.Unit
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A.Builder
+          VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
+          correspondingProperty: PROPERTY name:_title visibility:private modality:FINAL [var]
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:_title type:kotlin.String visibility:private' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.<set-_title>' type=foo.bar.A.Builder origin=null
+              value: GET_VAR '<set-?>: kotlin.String declared in foo.bar.A.Builder.<set-_title>' type=kotlin.String origin=null
+      PROPERTY name:_size visibility:private modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:_size type:kotlin.Int visibility:private
+          EXPRESSION_BODY
+            CONST Int type=kotlin.Int value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_size> visibility:private modality:FINAL returnType:kotlin.Int
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A.Builder
+          correspondingProperty: PROPERTY name:_size visibility:private modality:FINAL [var]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='private final fun <get-_size> (): kotlin.Int declared in foo.bar.A.Builder'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:_size type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+                receiver: GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.<get-_size>' type=foo.bar.A.Builder origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-_size> visibility:private modality:FINAL returnType:kotlin.Unit
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A.Builder
+          VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+          correspondingProperty: PROPERTY name:_size visibility:private modality:FINAL [var]
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:_size type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.<set-_size>' type=foo.bar.A.Builder origin=null
+              value: GET_VAR '<set-?>: kotlin.Int declared in foo.bar.A.Builder.<set-_size>' type=kotlin.Int origin=null
+      CONSTRUCTOR visibility:public returnType:foo.bar.A.Builder [primary]
+        VALUE_PARAMETER kind:Regular name:length index:0 type:kotlin.Int
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Builder modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+      FUN name:build visibility:public modality:FINAL returnType:foo.bar.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A.Builder
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun build (): foo.bar.A declared in foo.bar.A.Builder'
+            CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int, title: kotlin.String, size: kotlin.Int) declared in foo.bar.A' type=foo.bar.A origin=null
+              ARG length: CALL 'public final fun <get-length> (): kotlin.Int declared in foo.bar.A.Builder' type=kotlin.Int origin=GET_PROPERTY
+                ARG <this>: GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.build' type=foo.bar.A.Builder origin=IMPLICIT_ARGUMENT
+              ARG title: CALL 'private final fun <get-_title> (): kotlin.String declared in foo.bar.A.Builder' type=kotlin.String origin=GET_PROPERTY
+                ARG <this>: GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.build' type=foo.bar.A.Builder origin=IMPLICIT_ARGUMENT
+              ARG size: CALL 'private final fun <get-_size> (): kotlin.Int declared in foo.bar.A.Builder' type=kotlin.Int origin=GET_PROPERTY
+                ARG <this>: GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.build' type=foo.bar.A.Builder origin=IMPLICIT_ARGUMENT
+      FUN name:size visibility:public modality:FINAL returnType:foo.bar.A.Builder
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A.Builder
+        VALUE_PARAMETER kind:Regular name:size index:1 type:kotlin.Int
+        BLOCK_BODY
+          CALL 'private final fun <set-_size> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.bar.A.Builder' type=kotlin.Unit origin=EQ
+            ARG <this>: GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.size' type=foo.bar.A.Builder origin=IMPLICIT_ARGUMENT
+            ARG <set-?>: GET_VAR 'size: kotlin.Int declared in foo.bar.A.Builder.size' type=kotlin.Int origin=null
+          RETURN type=kotlin.Nothing from='public final fun size (size: kotlin.Int): foo.bar.A.Builder declared in foo.bar.A.Builder'
+            GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.size' type=foo.bar.A.Builder origin=null
+      FUN name:title visibility:public modality:FINAL returnType:foo.bar.A.Builder
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A.Builder
+        VALUE_PARAMETER kind:Regular name:title index:1 type:kotlin.Int
+        BLOCK_BODY
+          CALL 'private final fun <set-_title> (<set-?>: kotlin.String): kotlin.Unit declared in foo.bar.A.Builder' type=kotlin.Unit origin=EQ
+            ARG <this>: GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.title' type=foo.bar.A.Builder origin=IMPLICIT_ARGUMENT
+            ARG <set-?>: CALL 'public open fun toString (): kotlin.String declared in kotlin.Int' type=kotlin.String origin=null
+              ARG <this>: GET_VAR 'title: kotlin.Int declared in foo.bar.A.Builder.title' type=kotlin.Int origin=null
+          RETURN type=kotlin.Nothing from='public final fun title (title: kotlin.Int): foo.bar.A.Builder declared in foo.bar.A.Builder'
+            GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.title' type=foo.bar.A.Builder origin=null
+      FUN name:title visibility:public modality:FINAL returnType:foo.bar.A.Builder
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A.Builder
+        VALUE_PARAMETER kind:Regular name:title index:1 type:kotlin.String
+        BLOCK_BODY
+          CALL 'private final fun <set-_title> (<set-?>: kotlin.String): kotlin.Unit declared in foo.bar.A.Builder' type=kotlin.Unit origin=EQ
+            ARG <this>: GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.title' type=foo.bar.A.Builder origin=IMPLICIT_ARGUMENT
+            ARG <set-?>: GET_VAR 'title: kotlin.String declared in foo.bar.A.Builder.title' type=kotlin.String origin=null
+          RETURN type=kotlin.Nothing from='public final fun title (title: kotlin.String): foo.bar.A.Builder declared in foo.bar.A.Builder'
+            GET_VAR '<this>: foo.bar.A.Builder declared in foo.bar.A.Builder.title' type=foo.bar.A.Builder origin=null
+    CONSTRUCTOR visibility:public returnType:foo.bar.A [primary]
+      VALUE_PARAMETER kind:Regular name:length index:0 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:title index:1 type:kotlin.String
+      VALUE_PARAMETER kind:Regular name:size index:2 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public [data] superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL returnType:kotlin.Int [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in foo.bar.A'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+            receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.component1' type=foo.bar.A origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL returnType:kotlin.String [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String declared in foo.bar.A'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:title type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+            receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.component2' type=foo.bar.A origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:component3 visibility:public modality:FINAL returnType:kotlin.Int [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component3 (): kotlin.Int declared in foo.bar.A'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+            receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.component3' type=foo.bar.A origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL returnType:foo.bar.A
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A
+      VALUE_PARAMETER kind:Regular name:length index:1 type:kotlin.Int
+        EXPRESSION_BODY
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+            receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.copy' type=foo.bar.A origin=null
+      VALUE_PARAMETER kind:Regular name:title index:2 type:kotlin.String
+        EXPRESSION_BODY
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:title type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+            receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.copy' type=foo.bar.A origin=null
+      VALUE_PARAMETER kind:Regular name:size index:3 type:kotlin.Int
+        EXPRESSION_BODY
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+            receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.copy' type=foo.bar.A origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (length: kotlin.Int, title: kotlin.String, size: kotlin.Int): foo.bar.A declared in foo.bar.A'
+          CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int, title: kotlin.String, size: kotlin.Int) declared in foo.bar.A' type=foo.bar.A origin=null
+            ARG length: GET_VAR 'length: kotlin.Int declared in foo.bar.A.copy' type=kotlin.Int origin=null
+            ARG title: GET_VAR 'title: kotlin.String declared in foo.bar.A.copy' type=kotlin.String origin=null
+            ARG size: GET_VAR 'size: kotlin.Int declared in foo.bar.A.copy' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
+              ARG arg0: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.equals' type=foo.bar.A origin=null
+              ARG arg1: GET_VAR 'other: kotlin.Any? declared in foo.bar.A.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in foo.bar.A'
+              CONST Boolean type=kotlin.Boolean value=true
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=foo.bar.A
+              GET_VAR 'other: kotlin.Any? declared in foo.bar.A.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in foo.bar.A'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:foo.bar.A [val]
+          TYPE_OP type=foo.bar.A origin=IMPLICIT_CAST typeOperand=foo.bar.A
+            GET_VAR 'other: kotlin.Any? declared in foo.bar.A.equals' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.equals' type=foo.bar.A origin=null
+                ARG arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'val tmp_0: foo.bar.A declared in foo.bar.A.equals' type=foo.bar.A origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in foo.bar.A'
+              CONST Boolean type=kotlin.Boolean value=false
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:title type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+                  receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.equals' type=foo.bar.A origin=null
+                ARG arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:title type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+                  receiver: GET_VAR 'val tmp_0: foo.bar.A declared in foo.bar.A.equals' type=foo.bar.A origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in foo.bar.A'
+              CONST Boolean type=kotlin.Boolean value=false
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.equals' type=foo.bar.A origin=null
+                ARG arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'val tmp_0: foo.bar.A declared in foo.bar.A.equals' type=foo.bar.A origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in foo.bar.A'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in foo.bar.A'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      BLOCK_BODY
+        VAR name:result type:kotlin.Int [var]
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.hashCode' type=foo.bar.A origin=null
+        SET_VAR 'var result: kotlin.Int declared in foo.bar.A.hashCode' type=kotlin.Unit origin=EQ
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            ARG <this>: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              ARG <this>: GET_VAR 'var result: kotlin.Int declared in foo.bar.A.hashCode' type=kotlin.Int origin=null
+              ARG other: CONST Int type=kotlin.Int value=31
+            ARG other: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
+              ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:title type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+                receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.hashCode' type=foo.bar.A origin=null
+        SET_VAR 'var result: kotlin.Int declared in foo.bar.A.hashCode' type=kotlin.Unit origin=EQ
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            ARG <this>: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              ARG <this>: GET_VAR 'var result: kotlin.Int declared in foo.bar.A.hashCode' type=kotlin.Int origin=null
+              ARG other: CONST Int type=kotlin.Int value=31
+            ARG other: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.hashCode' type=foo.bar.A origin=null
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in foo.bar.A'
+          GET_VAR 'var result: kotlin.Int declared in foo.bar.A.hashCode' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.A
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in foo.bar.A'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="A("
+            CONST String type=kotlin.String value="length="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.toString' type=foo.bar.A origin=null
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="title="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:title type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.toString' type=foo.bar.A origin=null
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="size="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.toString' type=foo.bar.A origin=null
+            CONST String type=kotlin.String value=")"
+    FUN name:builder visibility:public modality:FINAL returnType:foo.bar.A.Builder
+      VALUE_PARAMETER kind:Regular name:length index:0 type:kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun builder (length: kotlin.Int): foo.bar.A.Builder declared in foo.bar.A'
+          CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in foo.bar.A.Builder' type=foo.bar.A.Builder origin=null
+            ARG length: GET_VAR 'length: kotlin.Int declared in foo.bar.A.builder' type=kotlin.Int origin=null
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:s type:foo.bar.A [val]
+        BLOCK type=foo.bar.A origin=BUILDER_LAMBDA_RUN
+          VAR BUILDER_LAMBDA_VAR name:<builder> type:foo.bar.A.Builder [var]
+          SET_VAR 'var <builder>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_INITIAL_CALL
+            CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in foo.bar.A.Builder' type=foo.bar.A.Builder origin=null
+              ARG length: CONST Int type=kotlin.Int value=3
+          SET_VAR 'var <builder>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_ACCUMULATION_CALL
+            CALL 'public final fun title (title: kotlin.String): foo.bar.A.Builder declared in foo.bar.A.Builder' type=foo.bar.A.Builder origin=null
+              ARG <this>: GET_VAR 'var <builder>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_ACCUMULATION_CALL
+              ARG title: CONST String type=kotlin.String value="hello"
+          SET_VAR 'var <builder>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_ACCUMULATION_CALL
+            CALL 'public final fun title (title: kotlin.Int): foo.bar.A.Builder declared in foo.bar.A.Builder' type=foo.bar.A.Builder origin=null
+              ARG <this>: GET_VAR 'var <builder>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_ACCUMULATION_CALL
+              ARG title: CONST Int type=kotlin.Int value=1
+          CALL 'public final fun build (): foo.bar.A declared in foo.bar.A.Builder' type=foo.bar.A origin=null
+            ARG <this>: GET_VAR 'var <builder>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_FINAL_CALL
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.bar'
+        WHEN type=kotlin.String origin=IF
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  ARG arg0: CALL 'public final fun <get-length> (): kotlin.Int declared in foo.bar.A' type=kotlin.Int origin=GET_PROPERTY
+                    ARG <this>: GET_VAR 'val s: foo.bar.A declared in foo.bar.box' type=foo.bar.A origin=null
+                  ARG arg1: CONST Int type=kotlin.Int value=3
+                then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  ARG arg0: CALL 'public final fun <get-title> (): kotlin.String declared in foo.bar.A' type=kotlin.String origin=GET_PROPERTY
+                    ARG <this>: GET_VAR 'val s: foo.bar.A declared in foo.bar.box' type=foo.bar.A origin=null
+                  ARG arg1: CONST String type=kotlin.String value="1"
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: CONST String type=kotlin.String value="OK"
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST String type=kotlin.String value="FAIL"

@@ -33,9 +33,12 @@ _Gradle_. Add the corresponding Gradle plug-in to your `plugins` block in your G
 id("com.serranofp.builder.lambda") version "<current.release>"
 ```
 
-_Kotlin Toolchain_. Add the following block to your `module.yaml`,
+_Kotlin Toolchain_. Add the following blocks to your `module.yaml`,
 
 ```yaml
+dependencies:
+  - com.serranofp:builder-lambda-support-lib:<current.release>: compile-only
+    
 settings:
   kotlin:
     compilerPlugins:
