@@ -2,6 +2,7 @@ package com.serranofp.builder.lambda.fir
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -46,7 +47,7 @@ class CallablesCache(val session: FirSession) {
     fun FirClassSymbol<*>.computeCallablesDirect(): Map<Name, List<Category>> {
         val scope = unsubstitutedScope(session, ScopeSession(), true, null)
         val storage = mutableMapOf<Name, MutableList<Category>>()
-        scope.getDeclaredConstructors().singleOrNull()?.let { constructor ->
+        scope.getDeclaredConstructors().singleOrNull { it.origin !is FirDeclarationOrigin.Synthetic }?.let { constructor ->
             for (parameter in constructor.valueParameterSymbols) {
                 storage.getOrPutIfMissing(parameter.name, { mutableListOf() }).add(Category.Constructor(parameter))
             }

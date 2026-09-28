@@ -4,6 +4,7 @@ import com.serranofp.builder.lambda.BuilderLambdaIds
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.backend.js.lower.isSyntheticPrimaryConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -41,7 +42,9 @@ class CallTransformer : IrElementTransformerVoid() {
 
         val builderStatic = typeToBuild.declarations.find { it is IrFunction && it.isStatic && it.name == Name.identifier("builder") } as IrSimpleFunction
         val builderClass = (builderStatic.returnType as IrSimpleType).classifier.owner as IrClass
-        val builderConstructor = builderClass.constructors.singleOrNull() ?: builderStatic
+        val builderConstructor = builderClass.constructors.singleOrNull {
+            !it.isSyntheticPrimaryConstructor && !it.origin.isSynthetic
+        } ?: builderStatic
         val builderBuild = builderClass.declarations.find { it is IrFunction && it.name == Name.identifier("build") } as IrSimpleFunction
 
         val newBody = IrBlockImpl(

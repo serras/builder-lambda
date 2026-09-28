@@ -7,9 +7,11 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.constructors
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.symbol
+import org.jetbrains.kotlin.fir.resolve.isSyntheticSamConstructor
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -28,7 +30,9 @@ object Checker : FirFunctionCallChecker(MppCheckerKind.Common) {
         // check we follow the Builder pattern
         val typeToBuild =  typeArgument.toConeTypeProjection().type
         val builderClass = typeArgument.builderClass(context.session)
-        val builderClassConstructor = builderClass?.constructors(context.session)?.singleOrNull()
+        val builderClassConstructor = builderClass?.constructors(context.session)?.singleOrNull {
+            it.origin !is FirDeclarationOrigin.Synthetic
+        }
         val builderBuildFunction = builderClass?.builderBuildFunction(context.session)
 
         val followsBuilderPattern =
