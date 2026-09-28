@@ -83,7 +83,7 @@ buildConfig {
     }
 
     packageName("com.serranofp.builder.lambda")
-    buildConfigField("String", "KOTLIN_PLUGIN_ID", "\"${rootProject.group}\"")
+    buildConfigField("String", "KOTLIN_PLUGIN_ID", "\"com.serranofp.builder.lambda\"")
 }
 
 tasks.test {

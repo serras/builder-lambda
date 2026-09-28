@@ -24,7 +24,7 @@ dependencies {
 buildConfig {
     packageName(project.group.toString())
 
-    buildConfigField("String", "KOTLIN_PLUGIN_ID", "\"${rootProject.group}\"")
+    buildConfigField("String", "KOTLIN_PLUGIN_ID", "\"com.serranofp.builder.lambda\"")
 
     val pluginProject = project(":builder-lambda-compiler-plugin")
     buildConfigField("String", "KOTLIN_PLUGIN_GROUP", "\"${pluginProject.group}\"")
