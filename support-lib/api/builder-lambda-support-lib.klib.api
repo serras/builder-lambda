@@ -6,4 +6,8 @@
 // - Show declarations: true
 
 // Library unique name: <com.serranofp:builder-lambda-support-lib>
+open annotation class com.serranofp.builder.lambda/LocalBuilder : kotlin/Annotation { // com.serranofp.builder.lambda/LocalBuilder|null[0]
+    constructor <init>() // com.serranofp.builder.lambda/LocalBuilder.<init>|<init>(){}[0]
+}
+
 final fun <#A: kotlin/Any?, #B: kotlin/Any?> com.serranofp.builder.lambda/build(kotlin/Function1<#B, kotlin/Unit>): #A // com.serranofp.builder.lambda/build|build(kotlin.Function1<0:1,kotlin.Unit>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
