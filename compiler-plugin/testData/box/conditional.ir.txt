@@ -1,4 +1,4 @@
-FILE fqName:foo.bar fileName:/simple.kt
+FILE fqName:foo.bar fileName:/conditional.kt
   CLASS CLASS name:A modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.A
     PROPERTY name:length visibility:public modality:FINAL [val]
@@ -278,7 +278,7 @@ FILE fqName:foo.bar fileName:/simple.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: foo.bar.A declared in foo.bar.A.toString' type=foo.bar.A origin=null
             CONST String type=kotlin.String value=")"
-    FUN name:builder visibility:public modality:FINAL returnType:foo.bar.A.Builder
+    FUN name:builder visibility:public modality:FINAL returnType:foo.bar.A.Builder [companion]
       VALUE_PARAMETER kind:Regular name:length index:0 type:kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun builder (length: kotlin.Int): foo.bar.A.Builder declared in foo.bar.A'
@@ -287,34 +287,92 @@ FILE fqName:foo.bar fileName:/simple.kt
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       VAR name:s type:foo.bar.A [val]
-        BLOCK type=foo.bar.A origin=BUILDER_LAMBDA_RUN
-          VAR BUILDER_LAMBDA_VAR name:<builder> type:foo.bar.A.Builder [var]
-          SET_VAR 'var <builder>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_INITIAL_CALL
-            CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in foo.bar.A.Builder' type=foo.bar.A.Builder origin=null
-              ARG length: CONST Int type=kotlin.Int value=3
-          SET_VAR 'var <builder>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_ACCUMULATION_CALL
-            CALL 'public final fun title (title: kotlin.String): foo.bar.A.Builder declared in foo.bar.A.Builder' type=foo.bar.A.Builder origin=null
-              ARG <this>: GET_VAR 'var <builder>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_ACCUMULATION_CALL
-              ARG title: CONST String type=kotlin.String value="hello"
-          CALL 'public final fun build (): foo.bar.A declared in foo.bar.A.Builder' type=foo.bar.A origin=null
-            ARG <this>: GET_VAR 'var <builder>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_FINAL_CALL
-      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.bar'
-        WHEN type=kotlin.String origin=IF
-          BRANCH
-            if: WHEN type=kotlin.Boolean origin=ANDAND
-              BRANCH
-                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+        CALL 'public final fun box1 (condition: kotlin.Boolean): foo.bar.A declared in foo.bar' type=foo.bar.A origin=null
+          ARG condition: CONST Boolean type=kotlin.Boolean value=true
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: WHEN type=kotlin.Boolean origin=OROR
+            BRANCH
+              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+                ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                   ARG arg0: CALL 'public final fun <get-length> (): kotlin.Int declared in foo.bar.A' type=kotlin.Int origin=GET_PROPERTY
                     ARG <this>: GET_VAR 'val s: foo.bar.A declared in foo.bar.box' type=foo.bar.A origin=null
                   ARG arg1: CONST Int type=kotlin.Int value=3
-                then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              then: CONST Boolean type=kotlin.Boolean value=true
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+                ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                   ARG arg0: CALL 'public final fun <get-title> (): kotlin.String declared in foo.bar.A' type=kotlin.String origin=GET_PROPERTY
                     ARG <this>: GET_VAR 'val s: foo.bar.A declared in foo.bar.box' type=foo.bar.A origin=null
                   ARG arg1: CONST String type=kotlin.String value="hello"
-              BRANCH
-                if: CONST Boolean type=kotlin.Boolean value=true
-                then: CONST Boolean type=kotlin.Boolean value=false
-            then: CONST String type=kotlin.String value="OK"
-          BRANCH
-            if: CONST Boolean type=kotlin.Boolean value=true
-            then: CONST String type=kotlin.String value="FAIL"
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.bar'
+            CONST String type=kotlin.String value="FAIL"
+      VAR name:t type:foo.bar.A [val]
+        CALL 'public final fun box2 (condition: kotlin.Boolean): foo.bar.A declared in foo.bar' type=foo.bar.A origin=null
+          ARG condition: CONST Boolean type=kotlin.Boolean value=true
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: WHEN type=kotlin.Boolean origin=OROR
+            BRANCH
+              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+                ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                  ARG arg0: CALL 'public final fun <get-length> (): kotlin.Int declared in foo.bar.A' type=kotlin.Int origin=GET_PROPERTY
+                    ARG <this>: GET_VAR 'val t: foo.bar.A declared in foo.bar.box' type=foo.bar.A origin=null
+                  ARG arg1: CONST Int type=kotlin.Int value=3
+              then: CONST Boolean type=kotlin.Boolean value=true
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+                ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                  ARG arg0: CALL 'public final fun <get-title> (): kotlin.String declared in foo.bar.A' type=kotlin.String origin=GET_PROPERTY
+                    ARG <this>: GET_VAR 'val t: foo.bar.A declared in foo.bar.box' type=foo.bar.A origin=null
+                  ARG arg1: CONST String type=kotlin.String value="hello"
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.bar'
+            CONST String type=kotlin.String value="FAIL"
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.bar'
+        CONST String type=kotlin.String value="OK"
+  FUN name:box1 visibility:public modality:FINAL returnType:foo.bar.A
+    VALUE_PARAMETER kind:Regular name:condition index:0 type:kotlin.Boolean
+    BLOCK_BODY
+      VAR name:s type:foo.bar.A [val]
+        BLOCK type=foo.bar.A origin=BUILDER_LAMBDA_RUN
+          VAR BUILDER_LAMBDA_VAR name:<builder-0> type:foo.bar.A.Builder [var]
+          SET_VAR 'var <builder-0>: foo.bar.A.Builder declared in foo.bar.box1' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_INITIAL_CALL
+            CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in foo.bar.A.Builder' type=foo.bar.A.Builder origin=null
+              ARG length: CONST Int type=kotlin.Int value=3
+          SET_VAR 'var <builder-0>: foo.bar.A.Builder declared in foo.bar.box1' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_ACCUMULATION_CALL
+            CALL 'public final fun title (title: kotlin.String): foo.bar.A.Builder declared in foo.bar.A.Builder' type=foo.bar.A.Builder origin=null
+              ARG <this>: GET_VAR 'var <builder-0>: foo.bar.A.Builder declared in foo.bar.box1' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_ACCUMULATION_CALL
+              ARG title: WHEN type=kotlin.String origin=IF
+                BRANCH
+                  if: GET_VAR 'condition: kotlin.Boolean declared in foo.bar.box1' type=kotlin.Boolean origin=null
+                  then: CONST String type=kotlin.String value="hello"
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CONST String type=kotlin.String value="bye"
+          CALL 'public final fun build (): foo.bar.A declared in foo.bar.A.Builder' type=foo.bar.A origin=null
+            ARG <this>: GET_VAR 'var <builder-0>: foo.bar.A.Builder declared in foo.bar.box1' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_FINAL_CALL
+      RETURN type=kotlin.Nothing from='public final fun box1 (condition: kotlin.Boolean): foo.bar.A declared in foo.bar'
+        GET_VAR 'val s: foo.bar.A declared in foo.bar.box1' type=foo.bar.A origin=null
+  FUN name:box2 visibility:public modality:FINAL returnType:foo.bar.A
+    VALUE_PARAMETER kind:Regular name:condition index:0 type:kotlin.Boolean
+    BLOCK_BODY
+      VAR name:s type:foo.bar.A [val]
+        BLOCK type=foo.bar.A origin=BUILDER_LAMBDA_RUN
+          VAR BUILDER_LAMBDA_VAR name:<builder-0> type:foo.bar.A.Builder [var]
+          SET_VAR 'var <builder-0>: foo.bar.A.Builder declared in foo.bar.box2' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_INITIAL_CALL
+            CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in foo.bar.A.Builder' type=foo.bar.A.Builder origin=null
+              ARG length: CONST Int type=kotlin.Int value=3
+          WHEN type=kotlin.Unit origin=IF
+            BRANCH
+              if: GET_VAR 'condition: kotlin.Boolean declared in foo.bar.box2' type=kotlin.Boolean origin=null
+              then: BLOCK type=kotlin.Unit origin=null
+                SET_VAR 'var <builder-0>: foo.bar.A.Builder declared in foo.bar.box2' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_ACCUMULATION_CALL
+                  CALL 'public final fun title (title: kotlin.String): foo.bar.A.Builder declared in foo.bar.A.Builder' type=foo.bar.A.Builder origin=null
+                    ARG <this>: GET_VAR 'var <builder-0>: foo.bar.A.Builder declared in foo.bar.box2' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_ACCUMULATION_CALL
+                    ARG title: CONST String type=kotlin.String value="hello"
+          CALL 'public final fun build (): foo.bar.A declared in foo.bar.A.Builder' type=foo.bar.A origin=null
+            ARG <this>: GET_VAR 'var <builder-0>: foo.bar.A.Builder declared in foo.bar.box2' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_FINAL_CALL
+      RETURN type=kotlin.Nothing from='public final fun box2 (condition: kotlin.Boolean): foo.bar.A declared in foo.bar'
+        GET_VAR 'val s: foo.bar.A declared in foo.bar.box2' type=foo.bar.A origin=null

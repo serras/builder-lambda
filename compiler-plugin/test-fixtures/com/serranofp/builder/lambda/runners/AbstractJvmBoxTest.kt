@@ -1,10 +1,8 @@
 package com.serranofp.builder.lambda.runners
 
 import com.serranofp.builder.lambda.services.configurePlugin
-import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.services.EnvironmentBasedStandardLibrariesPathProvider
@@ -30,7 +28,6 @@ open class AbstractJvmBoxTest : AbstractFirLightTreeBlackBoxCodegenTest() {
          */
         defaultDirectives {
             +CodegenTestDirectives.DUMP_IR
-            +FirDiagnosticsDirectives.FIR_DUMP
             +JvmEnvironmentConfigurationDirectives.FULL_JDK
 
             +CodegenTestDirectives.IGNORE_DEXING // Avoids loading R8 from the classpath.

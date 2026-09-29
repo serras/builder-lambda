@@ -24,6 +24,7 @@ class B {
 
     class Builder(val size: Int) {
         fun author(author: String): Builder = this
+        fun authors(authors: List<String>): Builder = this
         fun build(): B = TODO()
     }
 }
@@ -32,7 +33,8 @@ fun test() {
     val r = build<A, *> {
         length = 3
         thing = <!CONSTRUCTOR_ARGS_MISSING!>build<!><B, *> {
-            author = "me"
+            author("me")
+            author("you")
             <!DSL_SCOPE_VIOLATION!>title<!> = "nested"
         }
     }

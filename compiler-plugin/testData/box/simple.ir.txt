@@ -288,16 +288,16 @@ FILE fqName:foo.bar fileName:/simple.kt
     BLOCK_BODY
       VAR name:s type:foo.bar.A [val]
         BLOCK type=foo.bar.A origin=BUILDER_LAMBDA_RUN
-          VAR BUILDER_LAMBDA_VAR name:<builder> type:foo.bar.A.Builder [var]
-          SET_VAR 'var <builder>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_INITIAL_CALL
+          VAR BUILDER_LAMBDA_VAR name:<builder-0> type:foo.bar.A.Builder [var]
+          SET_VAR 'var <builder-0>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_INITIAL_CALL
             CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in foo.bar.A.Builder' type=foo.bar.A.Builder origin=null
               ARG length: CONST Int type=kotlin.Int value=3
-          SET_VAR 'var <builder>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_ACCUMULATION_CALL
+          SET_VAR 'var <builder-0>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_ACCUMULATION_CALL
             CALL 'public final fun title (title: kotlin.String): foo.bar.A.Builder declared in foo.bar.A.Builder' type=foo.bar.A.Builder origin=null
-              ARG <this>: GET_VAR 'var <builder>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_ACCUMULATION_CALL
+              ARG <this>: GET_VAR 'var <builder-0>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_ACCUMULATION_CALL
               ARG title: CONST String type=kotlin.String value="hello"
           CALL 'public final fun build (): foo.bar.A declared in foo.bar.A.Builder' type=foo.bar.A origin=null
-            ARG <this>: GET_VAR 'var <builder>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_FINAL_CALL
+            ARG <this>: GET_VAR 'var <builder-0>: foo.bar.A.Builder declared in foo.bar.box' type=foo.bar.A.Builder origin=BUILDER_LAMBDA_FINAL_CALL
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.bar'
         WHEN type=kotlin.String origin=IF
           BRANCH
