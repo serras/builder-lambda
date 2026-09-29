@@ -51,9 +51,15 @@ class CallRefinement(session: FirSession) : FirFunctionCallRefinementExtension(s
             deprecationsProvider = EmptyDeprecationsProvider
             classKind = ClassKind.CLASS
             scopeProvider = FirKotlinScopeProvider()
-
             name = refinedTypeId.shortClassName
             this.symbol = refinedTypeSymbol
+
+            annotations.add(buildAnnotation {
+                annotationTypeRef = buildResolvedTypeRef {
+                    coneType = session.typeContext.symbolProvider.getClassLikeSymbolByClassId(BuilderLambdaIds.DSL_MARKER_ANNOTATION)!!.defaultType()
+                }
+                argumentMapping = buildAnnotationArgumentMapping { }
+            })
         }
 
         val callData = GeneratedCallData(classToBuild, builderClass, refinedTypeDeclaration)

@@ -47,6 +47,10 @@ kotlin {
 
     @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
     abiValidation()
+
+    compilerOptions {
+        freeCompilerArgs.add("-Xreturn-value-checker=full")
+    }
 }
 
 if (project.findProperty("onlyLocal")?.toString()?.toBooleanStrict() != true) {

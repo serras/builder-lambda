@@ -35,7 +35,7 @@ FILE: dump.kt
     }
     public final fun test(): R|kotlin/Unit| {
         lval s: R|foo/bar/A| = R|kotlin/run|<R|foo/bar/A|>(<L> = fun <anonymous>(): R|foo/bar/A| <inline=Inline, kind=EXACTLY_ONCE>  {
-            local abstract class LocalABuilder {
+            @R|com/serranofp/builder/lambda/LocalBuilder|() local abstract class LocalABuilder {
                 public final var length: R|kotlin/Int|
                     public get(): R|kotlin/Int|
                     public set(value: R|kotlin/Int|): R|kotlin/Unit|

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -60,16 +61,25 @@ object Checker : FirFunctionCallChecker(MppCheckerKind.Common) {
         val requiredNames = cache.getRequiredNames(builderClass)
         var afterRequiredNames = false
         val givenRequiredNames = mutableSetOf<Name>()
-        for (statement in body.statements) {
-            val requiredName = statement.extractAssignmentToRequired(localBuilderClass, requiredNames)
 
-            if (!afterRequiredNames) {
-                if (requiredName != null) { givenRequiredNames.add(requiredName) }
-                else { afterRequiredNames = true }
-            } else if (requiredName != null) {
-                reporter.reportOn(statement.lValue.source, Errors.CONSTRUCTOR_ARG_GO_FIRST)
+        body.accept(object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                when (element) {
+                    is FirBlock -> { }
+                    !is FirStatement -> { afterRequiredNames = true }
+                    else -> {
+                        val requiredName = element.extractAssignmentToRequired(localBuilderClass, requiredNames)
+                        if (!afterRequiredNames) {
+                            if (requiredName != null) { givenRequiredNames.add(requiredName) }
+                            else { afterRequiredNames = true }
+                        } else if (requiredName != null) {
+                            reporter.reportOn(element.lValue.source, Errors.CONSTRUCTOR_ARG_GO_FIRST)
+                        }
+                    }
+                }
+                return element.acceptChildren(this)
             }
-        }
+        })
 
         val missingParameters = requiredNames - givenRequiredNames
         if (missingParameters.isNotEmpty()) {
@@ -77,8 +87,8 @@ object Checker : FirFunctionCallChecker(MppCheckerKind.Common) {
         }
 
         body.accept(object : FirVisitor<Unit, Boolean>() {
-            // 'data' tells us whether we should check the property
-            override fun visitElement(element: FirElement, data: Boolean) {
+            @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+            override fun visitElement(element: FirElement, onAssignmentPosition: Boolean) {
                 when (element) {
                     // on assignments we allow one level of property
                     is FirVariableAssignment -> {
@@ -89,7 +99,7 @@ object Checker : FirFunctionCallChecker(MppCheckerKind.Common) {
                         element.leftArgument.accept(this, false)
                         element.rightArgument.accept(this, true)
                     }
-                    is FirPropertyAccessExpression if data -> {
+                    is FirPropertyAccessExpression if onAssignmentPosition -> {
                         val dispatch = element.dispatchReceiver as? FirThisReceiverExpression
                         if (dispatch?.resolvedType?.classId == localBuilderClass.classId) {
                             reporter.reportOn(element.source, Errors.BUILDER_CANNOT_BE_READ)
