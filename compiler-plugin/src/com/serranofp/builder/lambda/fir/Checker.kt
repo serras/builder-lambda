@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -62,24 +61,34 @@ object Checker : FirFunctionCallChecker(MppCheckerKind.Common) {
         var afterRequiredNames = false
         val givenRequiredNames = mutableSetOf<Name>()
 
-        body.accept(object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
+        body.accept(object : FirVisitor<Unit, Boolean>() {
+            @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+            override fun visitElement(element: FirElement, countsAsAssignment: Boolean) {
                 when (element) {
-                    is FirBlock -> { }
-                    !is FirStatement -> { afterRequiredNames = true }
+                    is FirBlock -> {
+                        element.acceptChildren(this, countsAsAssignment)
+                    }
+                    !is FirStatement -> {
+                        afterRequiredNames = true
+                        element.acceptChildren(this, false)
+                    }
                     else -> {
                         val requiredName = element.extractAssignmentToRequired(localBuilderClass, requiredNames)
-                        if (!afterRequiredNames) {
-                            if (requiredName != null) { givenRequiredNames.add(requiredName) }
-                            else { afterRequiredNames = true }
-                        } else if (requiredName != null) {
-                            reporter.reportOn(element.lValue.source, Errors.CONSTRUCTOR_ARG_GO_FIRST)
+                        if (requiredName != null) {
+                            if (countsAsAssignment) {
+                                givenRequiredNames.add(requiredName)
+                            }
+                            if (afterRequiredNames) {
+                                reporter.reportOn(element.lValue.source, Errors.CONSTRUCTOR_ARG_GO_FIRST)
+                            }
+                        } else {
+                            afterRequiredNames = true
+                            element.acceptChildren(this, false)
                         }
                     }
                 }
-                return element.acceptChildren(this)
             }
-        })
+        }, true)
 
         val missingParameters = requiredNames - givenRequiredNames
         if (missingParameters.isNotEmpty()) {

@@ -21,7 +21,7 @@ class A {
 fun Any.f() { }
 
 fun test() {
-    val r = <!CONSTRUCTOR_ARGS_MISSING!>build<!><A, *> {
+    val r = build<A, *> {
         title = "hello"
         <!CONSTRUCTOR_ARG_GO_FIRST!>length<!> = <!BUILDER_CANNOT_BE_READ!>title<!>.length
         <!BUILDER_CANNOT_BE_READ!>authors<!>[0] = "me"
