@@ -10,6 +10,6 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.ai:spring-ai-ollama:2.0.1")
+    implementation("org.springframework.ai:spring-ai-ollama:2.0.2")
     implementation("ai.djl.fasttext:fasttext-engine:0.38.0")
 }
