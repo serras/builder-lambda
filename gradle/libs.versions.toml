@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.4.20"
+kotlin = "2.4.21"
 junit = "4.13.2"
 buildconfig = "6.1.2"
 node-gradle = "7.1.0"
